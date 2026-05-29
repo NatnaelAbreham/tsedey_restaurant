@@ -5,7 +5,7 @@ const OrderSuccess = ({ onClose }) => {
 
   useEffect(() => {
     // smooth entrance animation
-    setTimeout(() => setIsVisible(true), 10);
+    setTimeout(() => setIsVisible(true), 1);
   }, []);
 
   return (

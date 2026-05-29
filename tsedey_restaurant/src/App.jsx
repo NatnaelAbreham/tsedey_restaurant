@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import Menu from './components/Menu'
 import CartSidebar from './components/CartSidebar'
 import OrderSuccess from './components/OrderSuccess'
+import Footer from "./components/Footer";
 
 const App = () => {
   const [cartItems, setCartItems] = useState([])
@@ -54,7 +55,7 @@ const App = () => {
   const totalPrice = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-[#e7f2fd] via-[#f8fbff] to-white">
       <Navbar 
         cartItemCount={totalItems} 
         onCartClick={() => setIsCartOpen(true)} 
@@ -70,6 +71,7 @@ const App = () => {
         onPlaceOrder={handlePlaceOrder}
       />
       {showSuccess && <OrderSuccess />}
+      <Footer />
     </div>
   )
 }
