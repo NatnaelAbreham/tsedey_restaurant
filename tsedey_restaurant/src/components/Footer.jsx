@@ -8,7 +8,7 @@ const Footer = () => {
         
         {/* Left */}
         <p className="text-sm text-gray-500">
-          © {new Date().getFullYear()} TasteHaven. All rights reserved.
+          © {new Date().getFullYear()} Tsedey Restaurant. All rights reserved.
         </p>
 
         {/* Center */}
@@ -26,7 +26,7 @@ const Footer = () => {
 
         {/* Right */}
         <p className="text-sm text-gray-400">
-          Made with ❤️ using React + Tailwind
+          For Employee only
         </p>
       </div>
     </footer>

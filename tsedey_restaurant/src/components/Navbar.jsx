@@ -25,7 +25,7 @@ const Navbar = ({ cartItemCount, onCartClick }) => {
           </div>
 
           <h1 className="text-xl font-extrabold text-gray-800 tracking-tight">
-            Taste<span className="text-orange-500">Haven</span>
+            Tsedey <span className="text-orange-500">Restaurant</span>
           </h1>
         </div>
 
