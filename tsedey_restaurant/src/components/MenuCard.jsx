@@ -1,7 +1,7 @@
 // src/components/MenuCard.jsx
 import React, { useState } from 'react'
 
-const MenuCard = ({ item, addToCart }) => {
+const MenuCard = ({ item, addToCart, darkMode }) => {
   const [isAdded, setIsAdded] = useState(false)
 
   const handleAddToCart = () => {
@@ -11,7 +11,9 @@ const MenuCard = ({ item, addToCart }) => {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+    <div className={`rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${
+      darkMode ? 'bg-gray-800' : 'bg-white'
+    }`}>
       <div className="relative h-48 overflow-hidden">
         <img 
           src={item.image} 
@@ -26,12 +28,18 @@ const MenuCard = ({ item, addToCart }) => {
       </div>
       <div className="p-5">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-bold text-gray-800">{item.name}</h3>
+          <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+            {item.name}
+          </h3>
           <span className="text-orange-500 font-bold">${item.price}</span>
         </div>
-        <p className="text-gray-500 text-sm mb-4 line-clamp-2">{item.description}</p>
+        <p className={`text-sm mb-4 line-clamp-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          {item.description}
+        </p>
         <div className="flex justify-between items-center">
-          <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
+          <span className={`text-xs px-2 py-1 rounded-full ${
+            darkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-400'
+          }`}>
             {item.category}
           </span>
           <button
