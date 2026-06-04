@@ -6,7 +6,7 @@ import AppRoutes from "./routes/AppRoutes";
 import CartSidebar from "./components/CartSidebar";
 import OrderSuccess from "./components/OrderSuccess";
 import Footer from "./components/Footer";
-import { useCart } from "./context/CartContext";
+import { useCart,CartProvider } from "./context/CartContext";
 import { ThemeProvider } from "./context/ThemeContext";
 
 const Layout = () => {
