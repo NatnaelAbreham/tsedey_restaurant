@@ -51,10 +51,10 @@ const Navbar = () => {
         {/* Actions */}
         <div className="flex items-center gap-3">
 
-          {/* Dark mode */}
+          {/* Dark mode - Hidden on mobile, visible on desktop */}
           <button
             onClick={toggleDarkMode}
-            className="p-2 rounded-full hover:scale-105 transition"
+            className="hidden md:block p-2 rounded-full hover:scale-105 transition"
             aria-label="Toggle theme"
           >
             {darkMode ? (
@@ -101,27 +101,41 @@ const Navbar = () => {
         >
           <Link
             to="/"
-            className={linkClass("/")}
+            className={`block ${linkClass("/")}`}
             onClick={() => setMobileOpen(false)}
           >
             Home
           </Link>
-
+          
           <Link
             to="/menu"
-            className={linkClass("/menu")}
+            className={`block ${linkClass("/menu")}`}
             onClick={() => setMobileOpen(false)}
           >
             Menu
           </Link>
-
+          
           <Link
             to="/contact"
-            className={linkClass("/contact")}
+            className={`block ${linkClass("/contact")}`}
             onClick={() => setMobileOpen(false)}
           >
             Contact
           </Link>
+
+          {/* Dark Mode Toggle - Now inside mobile menu */}
+          <button
+            onClick={() => {
+              toggleDarkMode();
+              setMobileOpen(false);
+            }}
+            className={`w-full flex items-center gap-3 py-2 ${
+              darkMode ? "text-yellow-400" : ""
+            }`}
+          >
+            {darkMode ? <FaSun /> : <FaMoon />}
+            <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
+          </button>
         </div>
       )}
     </nav>
