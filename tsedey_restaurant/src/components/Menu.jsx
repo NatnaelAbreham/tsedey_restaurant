@@ -2,6 +2,9 @@
 import React, { useMemo, useState } from "react";
 import MenuCard from "./MenuCard";
 
+import { useCart } from "../context/CartContext";
+import { useTheme } from "../context/ThemeContext";
+
 const menuItems = [
   {
     id: 1,
@@ -86,34 +89,42 @@ const menuItems = [
   },
 ];
 
-const Menu = ({ addToCart, limit, darkMode }) => {
+const Menu = ({ limit }) => {
   const [activeCategory, setActiveCategory] = useState("All");
+
+  const { addToCart } = useCart();
+  const { darkMode } = useTheme();
 
   const categories = useMemo(() => {
     return ["All", ...new Set(menuItems.map((item) => item.category))];
   }, []);
 
-  const filteredItems = activeCategory === "All"
-    ? menuItems
-    : menuItems.filter((item) => item.category === activeCategory);
-    
-  const displayItems = limit ? filteredItems.slice(0, limit) : filteredItems;
+  const filteredItems =
+    activeCategory === "All"
+      ? menuItems
+      : menuItems.filter((item) => item.category === activeCategory);
+
+  const displayItems = limit
+    ? filteredItems.slice(0, limit)
+    : filteredItems;
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-16">
+
       {/* Header */}
       <div className="text-center mb-12">
-        <h2 className={`text-4xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-          {limit ? 'Featured Menu' : 'Our Menu'}
+        <h2 className={`text-4xl font-bold ${darkMode ? "text-white" : "text-gray-800"}`}>
+          {limit ? "Featured Menu" : "Our Menu"}
         </h2>
+
         {!limit && (
-          <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          <p className={`mt-2 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
             Delicious food & refreshing drinks
           </p>
         )}
       </div>
 
-      {/* Categories (only show if not limited) */}
+      {/* Categories */}
       {!limit && (
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           {categories.map((category) => (
@@ -124,8 +135,8 @@ const Menu = ({ addToCart, limit, darkMode }) => {
                 activeCategory === category
                   ? "bg-orange-500 text-white shadow-lg scale-105"
                   : darkMode
-                    ? "bg-gray-800 border-gray-700 text-gray-300 hover:border-orange-400 hover:text-orange-500"
-                    : "bg-white border border-gray-200 text-gray-600 hover:border-orange-400 hover:text-orange-500"
+                    ? "bg-gray-800 text-gray-300 hover:text-orange-500"
+                    : "bg-white border text-gray-600 hover:text-orange-500"
               }`}
             >
               {category}
@@ -134,10 +145,10 @@ const Menu = ({ addToCart, limit, darkMode }) => {
         </div>
       )}
 
-      {/* Menu Grid */}
+      {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {displayItems.map((item) => (
-          <MenuCard key={item.id} item={item} addToCart={addToCart} darkMode={darkMode} />
+          <MenuCard key={item.id} item={item} />
         ))}
       </div>
     </section>

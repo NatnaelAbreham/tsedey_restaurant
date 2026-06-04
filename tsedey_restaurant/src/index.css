@@ -1,47 +1,126 @@
 @import "tailwindcss";
 
+/* =========================
+   BASE
+========================= */
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  @apply m-0 p-0 antialiased font-sans;
+  @apply m-0 p-0 antialiased font-sans transition-colors duration-300;
+
+  /* LIGHT MODE (DEFAULT) */
+  background-color: #f8fafc;
+  color: #0f172a;
 }
 
+/* DARK MODE */
 .dark body {
-  @apply bg-gray-950 text-white;
+  background-color: #0a0f1c;
+  color: #e5e7eb;
 }
 
-* {
-  @apply transition-all duration-300;
+/* =========================
+   TYPOGRAPHY (INHERIT SYSTEM)
+========================= */
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-semibold tracking-tight;
+  color: inherit;
 }
+
+p {
+  color: inherit;
+}
+
+/* Muted text utility */
+.muted {
+  color: #64748b;
+}
+
+.dark .muted {
+  color: #94a3b8;
+}
+
+/* Accent text */
+.accent {
+  color: #f97316;
+}
+
+/* =========================
+   LINKS (MODERN STYLE)
+========================= */
 
 a {
   text-decoration: none;
+  color: inherit;
+  @apply transition-colors duration-300;
 }
 
-/* Selection */
+a:hover {
+  color: #f97316;
+}
+
+/* =========================
+   CARDS (OPTIONAL GLOBAL CLASS)
+========================= */
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.dark .card {
+  background: #111827;
+  border: 1px solid #1f2937;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.dark .card:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+
+/* =========================
+   SELECTION
+========================= */
+
 ::selection {
-  @apply bg-orange-500 text-white;
+  background: #f97316;
+  color: white;
 }
 
-/* Scrollbar */
+/* =========================
+   SCROLLBAR (MODERN LOOK)
+========================= */
+
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100;
+  background: #f1f5f9;
 }
 
 .dark ::-webkit-scrollbar-track {
-  @apply bg-gray-900;
+  background: #0f172a;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-orange-500 rounded-full;
+  background: #f97316;
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-orange-600;
+  background: #ea580c;
 }
