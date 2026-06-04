@@ -1,7 +1,9 @@
-import React from "react";
+
 import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useCart } from "../context/CartContext";
+import { FaMoon, FaSun } from "react-icons/fa";
+
 
 const Navbar = () => {
   const location = useLocation();
@@ -11,10 +13,9 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className={`sticky top-0 z-50 backdrop-blur-md transition-colors duration-300 ${
-      darkMode ? "bg-gray-800/80" : "bg-white/80"
-    } border-b shadow-sm`}>
-      
+    <nav className={`sticky top-0 z-50 backdrop-blur-md transition-colors duration-300 ${darkMode ? "bg-gray-800/80" : "bg-white/80"
+      } shadow-sm`}>
+
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between">
 
         {/* Logo */}
@@ -32,8 +33,12 @@ const Navbar = () => {
         {/* Actions */}
         <div className="flex gap-3 items-center">
 
-          <button onClick={toggleDarkMode}>
-            {darkMode ? "🌙" : "☀️"}
+          <button
+            onClick={toggleDarkMode}
+            className="p-2 rounded-full bg-white/90 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors shadow-md flex items-center justify-center"
+            aria-label="Toggle dark mode"
+          >
+            {darkMode ? <FaMoon className="text-yellow-400" /> : <FaSun className="text-orange-500" />}
           </button>
 
           <button

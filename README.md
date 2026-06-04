@@ -7,14 +7,14 @@ Users can browse menu items, add food to cart, manage quantity, and place orders
 
 ## ✨ Features
 
-- 🎨 Modern restaurant UI design
-- 🛒 Add to cart functionality
-- ➕ Increase / decrease item quantity
-- 💰 Live total price calculation
-- ✅ Order success modal popup
-- 📱 Fully responsive design (mobile + desktop)
-- 🍕 Food & Drinks menu system
-- 🎨 Clean Tailwind CSS styling
+-  Modern restaurant UI design
+-  Add to cart functionality
+-  Increase / decrease item quantity
+-  Live total price calculation
+-  Order success modal popup
+-  Fully responsive design (mobile + desktop)
+-  Food & Drinks menu system
+-  Clean Tailwind CSS styling
 
 ---
 
