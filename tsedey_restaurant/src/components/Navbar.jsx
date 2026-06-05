@@ -13,22 +13,26 @@ const Navbar = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  const linkClass = (path) =>
-    `transition ${
-      isActive(path)
-        ? "text-orange-500"
+  const linkClass = (path) => {
+    const active = isActive(path);
+
+    return `
+    relative px-3 py-2 rounded-full text-sm font-medium transition-all duration-300
+    ${active
+        ? "bg-orange-500 text-white shadow-md shadow-orange-500/30"
         : darkMode
-        ? "hover:text-orange-400"
-        : "hover:text-orange-500"
-    }`;
+          ? "text-gray-300 hover:text-white hover:bg-gray-800"
+          : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+      }
+  `;
+  };
 
   return (
     <nav
-      className={`sticky top-0 z-50 backdrop-blur-lg border-b transition-all duration-300 ${
-        darkMode
-          ? "bg-gray-900/80 border-gray-800 text-white"
-          : "bg-white/80 border-gray-200 text-gray-900"
-      }`}
+      className={`sticky top-0 z-50 backdrop-blur-lg border-b transition-all duration-300 ${darkMode
+        ? "bg-gray-900/80 border-gray-800 text-white"
+        : "bg-white/80 border-gray-200 text-gray-900"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
@@ -43,9 +47,17 @@ const Navbar = () => {
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-          <Link to="/" className={linkClass("/")}>Home</Link>
-          <Link to="/menu" className={linkClass("/menu")}>Menu</Link>
-          <Link to="/contact" className={linkClass("/contact")}>Contact</Link>
+          <Link to="/" className={linkClass("/")}>
+            Home
+          </Link>
+
+          <Link to="/menu" className={linkClass("/menu")}>
+            Menu
+          </Link>
+
+          <Link to="/contact" className={linkClass("/contact")}>
+            Contact
+          </Link>
         </div>
 
         {/* Actions */}
@@ -54,14 +66,14 @@ const Navbar = () => {
           {/* Dark mode - Hidden on mobile, visible on desktop */}
           <button
             onClick={toggleDarkMode}
-            className="hidden md:block p-2 rounded-full hover:scale-105 transition"
+            className="hidden md:flex items-center justify-center w-11 h-11 rounded-full
+             bg-white/10 backdrop-blur-md border border-white/20
+             hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg"
             aria-label="Toggle theme"
           >
-            {darkMode ? (
-              <FaSun className="text-yellow-400" />
-            ) : (
-              <FaMoon />
-            )}
+            <div className={`transition-all duration-500 ${darkMode ? "rotate-180 text-yellow-400" : "text-gray-800"}`}>
+              {darkMode ? <FaSun className="text-lg" /> : <FaMoon className="text-lg" />}
+            </div>
           </button>
 
           {/* Cart */}
@@ -73,7 +85,7 @@ const Navbar = () => {
             <span className="hidden sm:inline">Cart</span>
 
             {totalItems > 0 && (
-              <span className="absolute -top-2 -right-2 bg-black text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+              <span className="absolute -top-2 -right-2 min-w-5 h-5 px-1 flex items-center justify-center text-xs font-bold text-white rounded-full bg-gradient-to-br from-orange-400 to-red-500 shadow-[0_0_12px_rgba(255,100,0,0.6)] animate-bounce">
                 {totalItems}
               </span>
             )}
@@ -93,11 +105,10 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {mobileOpen && (
         <div
-          className={`md:hidden px-6 pb-4 pt-2 space-y-4 text-sm font-medium border-t ${
-            darkMode
-              ? "bg-gray-900 border-gray-800"
-              : "bg-white border-gray-200"
-          }`}
+          className={`md:hidden px-6 pb-4 pt-2 space-y-4 text-sm font-medium border-t ${darkMode
+            ? "bg-gray-900 border-gray-800"
+            : "bg-white border-gray-200"
+            }`}
         >
           <Link
             to="/"
@@ -106,7 +117,7 @@ const Navbar = () => {
           >
             Home
           </Link>
-          
+
           <Link
             to="/menu"
             className={`block ${linkClass("/menu")}`}
@@ -114,7 +125,7 @@ const Navbar = () => {
           >
             Menu
           </Link>
-          
+
           <Link
             to="/contact"
             className={`block ${linkClass("/contact")}`}
@@ -129,9 +140,8 @@ const Navbar = () => {
               toggleDarkMode();
               setMobileOpen(false);
             }}
-            className={`w-full flex items-center gap-3 py-2 ${
-              darkMode ? "text-yellow-400" : ""
-            }`}
+            className={`w-full flex items-center gap-3 py-2 ${darkMode ? "text-yellow-400" : ""
+              }`}
           >
             {darkMode ? <FaSun /> : <FaMoon />}
             <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
