@@ -36,7 +36,7 @@ const menuItems = [
     price: 8.99,
     category: "Food",
     image:
-      "https://images.unsplash.com/photo-1550304943-4f24f54dd8c9?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop",
     popular: false,
   },
   {
@@ -123,12 +123,15 @@ const Menu = ({ limit }) => {
     ? filteredItems.slice(0, limit)
     : filteredItems;
 
-  return (
-    <section
-      className={`max-w-7xl mx-auto px-4 py-16 transition-colors duration-300 ${
-        darkMode ? "bg-gray-950 text-white" : "bg-slate-50 text-gray-900"
-      }`}
-    >
+ return (
+  <section
+    className={`min-h-screen transition-colors duration-300 ${
+      darkMode ? "bg-gray-950 text-white" : "bg-[#e7f2fd] text-gray-900"
+    }`}
+  >
+    {/* INNER CONTAINER */}
+    <div className="max-w-7xl mx-auto px-4 py-16">
+
       {/* Header */}
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold">
@@ -136,11 +139,7 @@ const Menu = ({ limit }) => {
         </h2>
 
         {!limit && (
-          <p
-            className={`mt-2 ${
-              darkMode ? "text-gray-400" : "text-gray-500"
-            }`}
-          >
+          <p className={`mt-2 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
             Delicious food & refreshing drinks
           </p>
         )}
@@ -173,8 +172,10 @@ const Menu = ({ limit }) => {
           <MenuCard key={item.id} item={item} />
         ))}
       </div>
-    </section>
-  );
+
+    </div>
+  </section>
+);
 };
 
 export default Menu;
