@@ -34,34 +34,11 @@ const Home = ({ addToCart, darkMode }) => {
     },
   ];
 
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Food Enthusiast",
-      text: "Hands down the best Ethiopian restaurant I've ever visited. The doro wat is pure magic!",
-      rating: 5,
-    },
-    {
-      name: "Michael Chen",
-      role: "Regular Customer",
-      text: "Incredible atmosphere, authentic tastes, and staff treats you like family. Highly recommend!",
-      rating: 5,
-    },
-    {
-      name: "Ruth Habte",
-      role: "Ethiopian Foodie",
-      text: "The injera is perfectly sour, the tibs are melt-in-your-mouth. Tsedey never disappoints.",
-      rating: 5,
-    },
-  ];
+  
 
   return (
     <div
-      className={
-        darkMode
-          ? "bg-gray-950 text-white"
-          : "bg-white text-gray-900"
-      }
+     className="bg-gray-950 text-white"
     >
       {/* HERO SECTION - Fixed darkness issue, lighter overlay, more content structure */}
       <section className="relative min-h-[90vh] md:min-h-screen overflow-hidden flex items-center">
