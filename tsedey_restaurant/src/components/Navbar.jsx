@@ -54,6 +54,9 @@ const Navbar = () => {
           <Link to="/menu" className={linkClass("/menu")}>
             Menu
           </Link>
+          <Link to="/addmenu" className={linkClass("/addmenu")}>
+            Add Menu
+          </Link>
 
           <Link to="/contact" className={linkClass("/contact")}>
             Contact
