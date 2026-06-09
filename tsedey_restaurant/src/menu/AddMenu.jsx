@@ -67,32 +67,56 @@ const getCategoryId = (category) => {
 
   const formData = new FormData();
 
-  // 🧾 match backend Item model EXACT names
   formData.append("Name", form.name);
   formData.append("Description", form.description);
-  formData.append("Price", parseFloat(form.price || 0).toFixed(2));
-  formData.append("CategoryId", getCategoryId(form.category));// ⚠️ temporary (replace later with real category id)
-  formData.append("IsAvailable", form.is_available);
-  formData.append("CreatedBy", "admin"); // or logged user
+  formData.append("Price", Number(form.price));
+  formData.append("CategoryId", String(getCategoryId(form.category) || 0));
+  formData.append("IsAvailable", form.is_available ? "true" : "false");
+  formData.append("CreatedBy", "admin");
 
-  // 🖼️ IMPORTANT: must be "image" (matches backend param name)
   if (form.image) {
     formData.append("image", form.image);
   }
 
   try {
+    console.log("🚀 Sending request to /addmenu...");
+    console.log("📦 Form values:");
+    console.log({
+      name: form.name,
+      description: form.description,
+      price: form.price,
+      categoryId: getCategoryId(form.category),
+      isAvailable: form.is_available,
+      hasImage: !!form.image
+    });
+
     const response = await fetch("http://localhost:5238/addmenu", {
       method: "POST",
       body: formData,
     });
 
-    const data = await response.json();
+    console.log("📡 Response received");
+    console.log("Status:", response.status);
+    console.log("OK:", response.ok);
+    console.log("Headers:", Object.fromEntries(response.headers.entries()));
+
+    // 🔥 IMPORTANT: read raw text first (NOT json directly)
+    const text = await response.text();
+
+    console.log("📨 Raw backend response:");
+    console.log(text);
+
+    let data;
+    try {
+      data = JSON.parse(text);
+      console.log("✅ Parsed JSON:", data);
+    } catch (err) {
+      console.log("⚠️ Response is NOT valid JSON");
+    }
 
     if (response.ok) {
       alert("Item added successfully!");
-      console.log(data);
 
-      // reset form
       setForm({
         name: "",
         description: "",
@@ -105,10 +129,18 @@ const getCategoryId = (category) => {
       setPreview(null);
       setFileName("No file selected");
     } else {
-      alert(data.error || "Failed to add item");
+      console.error("❌ Request failed");
+      console.error("Server error details:", text);
+
+      alert(
+        data?.error ||
+        text ||
+        "Failed to add item"
+      );
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error("💥 Network/Client error:");
+    console.error(error);
     alert("Server error");
   }
 };
