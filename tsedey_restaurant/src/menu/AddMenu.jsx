@@ -12,7 +12,16 @@ const AddMenu = () => {
     is_available: true,
     image: null,
   });
-
+const getCategoryId = (category) => {
+  switch (category) {
+    case "food":
+      return 1;
+    case "drink":
+      return 2;
+    default:
+      return 1;
+  }
+};
   const [preview, setPreview] = useState(null);
   const [fileName, setFileName] = useState("No file selected");
 
@@ -53,16 +62,56 @@ const AddMenu = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const formattedData = {
-      ...form,
-      price: parseFloat(form.price || 0).toFixed(2),
-    };
+  const formData = new FormData();
 
-    console.log("SUBMIT:", formattedData);
-  };
+  // 🧾 match backend Item model EXACT names
+  formData.append("Name", form.name);
+  formData.append("Description", form.description);
+  formData.append("Price", parseFloat(form.price || 0).toFixed(2));
+  formData.append("CategoryId", getCategoryId(form.category));// ⚠️ temporary (replace later with real category id)
+  formData.append("IsAvailable", form.is_available);
+  formData.append("CreatedBy", "admin"); // or logged user
+
+  // 🖼️ IMPORTANT: must be "image" (matches backend param name)
+  if (form.image) {
+    formData.append("image", form.image);
+  }
+
+  try {
+    const response = await fetch("http://localhost:5238/addmenu", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("Item added successfully!");
+      console.log(data);
+
+      // reset form
+      setForm({
+        name: "",
+        description: "",
+        price: "",
+        category: "food",
+        is_available: true,
+        image: null,
+      });
+
+      setPreview(null);
+      setFileName("No file selected");
+    } else {
+      alert(data.error || "Failed to add item");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Server error");
+  }
+};
 
   return (
     <section
