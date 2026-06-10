@@ -25,7 +25,7 @@ const getCategoryId = (category) => {
   const [preview, setPreview] = useState(null);
   const [fileName, setFileName] = useState("No file selected");
 
-  // 🔥 PRICE CONTROL (2 DECIMALS ONLY)
+  //  PRICE CONTROL (2 DECIMALS ONLY)
   const handlePrice = (e) => {
     let value = e.target.value;
 
@@ -206,7 +206,7 @@ const getCategoryId = (category) => {
                     ? "bg-gray-800 border-gray-700 text-white"
                     : "bg-white border-gray-200"
                 }`}
-              />
+              required />
             </div>
 
             {/* PRICE + CATEGORY */}
