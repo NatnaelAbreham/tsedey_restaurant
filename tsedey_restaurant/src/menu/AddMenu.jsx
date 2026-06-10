@@ -1,5 +1,42 @@
-import  { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
+
+// Toast notification component
+const Toast = ({ message, type, onClose }) => {
+  const { darkMode } = useTheme();
+  
+  useEffect(() => {
+    const timer = setTimeout(onClose, 5000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className="fixed bottom-4 right-4 z-50 transition-all duration-300 transform translate-y-0 opacity-100">
+      <div className={`rounded-lg shadow-2xl p-4 min-w-[300px] border-l-4 ${
+        type === 'success' 
+          ? `border-green-500 ${darkMode ? 'bg-gray-800 text-green-400' : 'bg-white text-green-600'}`
+          : type === 'error'
+          ? `border-red-500 ${darkMode ? 'bg-gray-800 text-red-400' : 'bg-white text-red-600'}`
+          : `border-blue-500 ${darkMode ? 'bg-gray-800 text-blue-400' : 'bg-white text-blue-600'}`
+      }`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {type === 'success' && <span>✅</span>}
+            {type === 'error' && <span>❌</span>}
+            {type === 'info' && <span>ℹ️</span>}
+            <p className="text-sm font-medium">{message}</p>
+          </div>
+          <button 
+            onClick={onClose} 
+            className="ml-4 text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const AddMenu = () => {
   const { darkMode } = useTheme();
@@ -12,138 +49,150 @@ const AddMenu = () => {
     is_available: true,
     image: null,
   });
-const getCategoryId = (category) => {
-  switch (category) {
-    case "food":
-      return 1;
-    case "drink":
-      return 2;
-    default:
-      return 1;
-  }
-};
+
   const [preview, setPreview] = useState(null);
   const [fileName, setFileName] = useState("No file selected");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState(null);
 
-  //  PRICE CONTROL (2 DECIMALS ONLY)
+  const getCategoryId = (category) => {
+    const categories = { food: 1, drink: 2 };
+    return categories[category] || 1;
+  };
+
+  const showToast = (message, type = 'info') => {
+    setToast({ message, type });
+  };
+
   const handlePrice = (e) => {
     let value = e.target.value;
-
-    // allow only numbers + dot
     value = value.replace(/[^0-9.]/g, "");
-
-    // prevent multiple dots
     const parts = value.split(".");
     if (parts.length > 2) return;
-
-    // limit 2 decimal places
     if (parts[1]?.length > 2) return;
-
     setForm((prev) => ({ ...prev, price: value }));
   };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  // 📁 FILE UPLOAD (PREMIUM HANDLING)
   const handleImage = (e) => {
     const file = e.target.files[0];
-
-    if (file) {
-      setForm((prev) => ({ ...prev, image: file }));
-      setPreview(URL.createObjectURL(file));
-      setFileName(file.name);
-    }
-  };
-
- const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  const formData = new FormData();
-
-  formData.append("Name", form.name);
-  formData.append("Description", form.description);
-  formData.append("Price", Number(form.price));
-  formData.append("CategoryId", String(getCategoryId(form.category) || 0));
-  formData.append("IsAvailable", form.is_available ? "true" : "false");
-  formData.append("CreatedBy", "admin");
-
-  if (form.image) {
-    formData.append("image", form.image);
-  }
-
-  try {
-    console.log("🚀 Sending request to /addmenu...");
-    console.log("📦 Form values:");
-    console.log({
-      name: form.name,
-      description: form.description,
-      price: form.price,
-      categoryId: getCategoryId(form.category),
-      isAvailable: form.is_available,
-      hasImage: !!form.image
-    });
-
-    const response = await fetch("http://localhost:5238/addmenu", {
-      method: "POST",
-      body: formData,
-    });
-
-    console.log("📡 Response received");
-    console.log("Status:", response.status);
-    console.log("OK:", response.ok);
-    console.log("Headers:", Object.fromEntries(response.headers.entries()));
-
-    // 🔥 IMPORTANT: read raw text first (NOT json directly)
-    const text = await response.text();
-
-    console.log("📨 Raw backend response:");
-    console.log(text);
-
-    let data;
-    try {
-      data = JSON.parse(text);
-      console.log("✅ Parsed JSON:", data);
-    } catch (err) {
-      console.log("⚠️ Response is NOT valid JSON");
-    }
-
-    if (response.ok) {
-      alert("Item added successfully!");
-
-      setForm({
-        name: "",
-        description: "",
-        price: "",
-        category: "food",
-        is_available: true,
-        image: null,
-      });
-
+    
+    if (!file) {
+      setForm((prev) => ({ ...prev, image: null }));
       setPreview(null);
       setFileName("No file selected");
-    } else {
-      console.error("❌ Request failed");
-      console.error("Server error details:", text);
-
-      alert(
-        data?.error ||
-        text ||
-        "Failed to add item"
-      );
+      return;
     }
-  } catch (error) {
-    console.error("💥 Network/Client error:");
-    console.error(error);
-    alert("Server error");
-  }
-};
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      showToast('Please upload a valid image file (JPEG, PNG, WEBP)', 'error');
+      e.target.value = '';
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Image size should be less than 5MB', 'error');
+      e.target.value = '';
+      return;
+    }
+
+    setForm((prev) => ({ ...prev, image: file }));
+    setPreview(URL.createObjectURL(file));
+    setFileName(file.name);
+  };
+
+  const validateForm = () => {
+    if (!form.name.trim()) {
+      showToast('Please enter the item name', 'error');
+      return false;
+    }
+    
+    if (!form.description.trim()) {
+      showToast('Please enter the item description', 'error');
+      return false;
+    }
+    
+    if (!form.price || parseFloat(form.price) <= 0) {
+      showToast('Please enter a valid price', 'error');
+      return false;
+    }
+    
+    if (!form.image) {
+      showToast('Please select an image for the menu item', 'error');
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    
+    const formData = new FormData();
+    formData.append("Name", form.name.trim());
+    formData.append("Description", form.description.trim());
+    formData.append("Price", Number(form.price));
+    formData.append("CategoryId", String(getCategoryId(form.category)));
+    formData.append("IsAvailable", form.is_available.toString());
+    formData.append("CreatedBy", "admin");
+    formData.append("image", form.image);
+
+    try {
+      const response = await fetch("http://localhost:5238/addmenu", {
+        method: "POST",
+        body: formData,
+      });
+
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        data = { error: text };
+      }
+
+      if (response.ok) {
+        showToast('Menu item added successfully! 🎉', 'success');
+        
+        // Reset form
+        setForm({
+          name: "",
+          description: "",
+          price: "",
+          category: "food",
+          is_available: true,
+          image: null,
+        });
+        setPreview(null);
+        setFileName("No file selected");
+        
+        // Reset file input
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput) fileInput.value = '';
+      } else {
+        showToast(data?.error || data?.message || "Failed to add menu item", 'error');
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showToast("Network error. Please check your connection.", 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <section
@@ -153,14 +202,19 @@ const getCategoryId = (category) => {
           : "bg-gradient-to-b from-[#e7f2fd] to-white text-gray-900"
       }`}
     >
-      <div className="max-w-4xl w-full">
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
 
-        {/* TITLE */}
+      <div className="max-w-4xl w-full">
         <h1 className="text-4xl font-extrabold text-center mb-10 tracking-tight">
           Add Menu Item 🍽️
         </h1>
 
-        {/* CARD */}
         <div
           className={`backdrop-blur-xl shadow-2xl rounded-3xl p-8 border transition-all duration-300 ${
             darkMode
@@ -169,11 +223,10 @@ const getCategoryId = (category) => {
           }`}
         >
           <form onSubmit={handleSubmit} className="space-y-6">
-
             {/* NAME */}
             <div>
               <label className="text-sm font-medium mb-1 block">
-                Item Name
+                Item Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -193,7 +246,7 @@ const getCategoryId = (category) => {
             {/* DESCRIPTION */}
             <div>
               <label className="text-sm font-medium mb-1 block">
-                Description
+                Description <span className="text-red-500">*</span>
               </label>
               <textarea
                 name="description"
@@ -206,16 +259,16 @@ const getCategoryId = (category) => {
                     ? "bg-gray-800 border-gray-700 text-white"
                     : "bg-white border-gray-200"
                 }`}
-              required />
+                required
+              />
             </div>
 
             {/* PRICE + CATEGORY */}
             <div className="grid grid-cols-2 gap-4">
-
               {/* PRICE */}
               <div>
                 <label className="text-sm font-medium mb-1 block">
-                  Price (USD)
+                  Price (USD) <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -253,17 +306,16 @@ const getCategoryId = (category) => {
               </div>
             </div>
 
-            {/* FILE UPLOAD (PREMIUM) */}
+            {/* FILE UPLOAD */}
             <div>
               <label className="text-sm font-medium mb-1 block">
-                Upload Image
+                Upload Image <span className="text-red-500">*</span>
               </label>
-
               <label
-                className={`flex items-center justify-between px-4 py-3 rounded-xl border cursor-pointer transition ${
+                className={`flex items-center justify-between px-4 py-3 rounded-xl border cursor-pointer transition-all duration-200 ${
                   darkMode
-                    ? "bg-gray-800 border-gray-700 text-white"
-                    : "bg-white border-gray-200"
+                    ? "bg-gray-800 border-gray-700 text-white hover:bg-gray-750"
+                    : "bg-white border-gray-200 hover:bg-gray-50"
                 }`}
               >
                 <span className="text-sm truncate">{fileName}</span>
@@ -278,35 +330,80 @@ const getCategoryId = (category) => {
                 />
               </label>
 
-              {/* PREVIEW */}
               {preview && (
-                <img
-                  src={preview}
-                  alt="preview"
-                  className="mt-4 w-32 h-32 object-cover rounded-2xl shadow-lg"
-                />
+                <div className="mt-4 relative inline-block">
+                  <img
+                    src={preview}
+                    alt="preview"
+                    className="w-32 h-32 object-cover rounded-2xl shadow-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPreview(null);
+                      setFileName("No file selected");
+                      setForm((prev) => ({ ...prev, image: null }));
+                      const fileInput = document.querySelector('input[type="file"]');
+                      if (fileInput) fileInput.value = '';
+                    }}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                  >
+                    ✕
+                  </button>
+                </div>
               )}
             </div>
 
             {/* AVAILABLE */}
-            <label className="flex items-center gap-2 text-sm">
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
               <input
                 type="checkbox"
                 name="is_available"
                 checked={form.is_available}
                 onChange={handleChange}
+                className="w-4 h-4 rounded"
               />
-              Available
+              <span>Available</span>
             </label>
 
             {/* BUTTON */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition active:scale-95 shadow-lg"
+              disabled={isSubmitting}
+              className={`w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg ${
+                isSubmitting 
+                  ? 'opacity-75 cursor-not-allowed' 
+                  : 'hover:opacity-90 active:scale-95'
+              }`}
             >
-              Add Item
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg 
+                    className="animate-spin h-5 w-5 text-white" 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24"
+                  >
+                    <circle 
+                      className="opacity-25" 
+                      cx="12" 
+                      cy="12" 
+                      r="10" 
+                      stroke="currentColor" 
+                      strokeWidth="4"
+                    />
+                    <path 
+                      className="opacity-75" 
+                      fill="currentColor" 
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  Adding...
+                </span>
+              ) : (
+                "Add Item"
+              )}
             </button>
-
           </form>
         </div>
       </div>
