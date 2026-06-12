@@ -166,7 +166,7 @@ const AddMenu = () => {
       }
 
       if (response.ok) {
-        showToast('Menu item added successfully! 🎉', 'success');
+        showToast('Menu item added successfully!', 'success');
         
         // Reset form
         setForm({
