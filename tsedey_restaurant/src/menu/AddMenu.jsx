@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
 
+
 // Toast notification component
 const Toast = ({ message, type, onClose }) => {
   const { darkMode } = useTheme();
