@@ -87,7 +87,7 @@ const InventoryPage = () => {
         {/* HEADER */}
         <div className="mb-8">
           <h1 className="text-4xl font-extrabold">
-            Inventory Management 📦
+            Inventory Management 
           </h1>
           <p className={`mt-2 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
             Update available stock quantities.
