@@ -17,61 +17,7 @@ const menuItems = [
       "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=400&h=300&fit=crop",
     popular: true,
   },
-  {
-    id: 2,
-    name: "Spaghetti Carbonara",
-    description:
-      "Creamy sauce with pancetta, egg, pecorino cheese, and black pepper",
-    price: 14.99,
-    category: "Food",
-    image:
-      "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=300&fit=crop",
-    popular: true,
-  },
-  {
-    id: 3,
-    name: "Caesar Salad",
-    description:
-      "Crisp romaine, parmesan, croutons, and creamy caesar dressing",
-    price: 8.99,
-    category: "Food",
-    image:
-      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop",
-    popular: false,
-  },
-  {
-    id: 4,
-    name: "Grilled Salmon",
-    description:
-      "Atlantic salmon with lemon butter sauce, served with vegetables",
-    price: 22.99,
-    category: "Food",
-    image:
-      "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&h=300&fit=crop",
-    popular: true,
-  },
-  {
-    id: 5,
-    name: "Cheeseburger",
-    description:
-      "Angus beef, cheddar cheese, lettuce, tomato, onion, special sauce",
-    price: 11.99,
-    category: "Food",
-    image:
-      "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
-    popular: false,
-  },
-  {
-    id: 6,
-    name: "Tiramisu",
-    description:
-      "Classic Italian dessert with espresso soaked ladyfingers",
-    price: 6.99,
-    category: "Food",
-    image:
-      "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=300&fit=crop",
-    popular: false,
-  },
+ 
   {
     id: 7,
     name: "Coca Cola",
@@ -82,26 +28,7 @@ const menuItems = [
       "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=400&h=300&fit=crop",
     popular: false,
   },
-  {
-    id: 8,
-    name: "Fresh Orange Juice",
-    description: "Freshly squeezed oranges, no sugar added",
-    price: 3.99,
-    category: "Drinks",
-    image:
-      "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=300&fit=crop",
-    popular: true,
-  },
-  {
-    id: 9,
-    name: "Iced Coffee",
-    description: "Cold brew coffee served over ice",
-    price: 4.5,
-    category: "Drinks",
-    image:
-      "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&h=300&fit=crop",
-    popular: false,
-  },
+  
 ];
 
 const Menu = ({ limit }) => {
