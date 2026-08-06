@@ -1,45 +1,50 @@
-// src/components/Menu.jsx
-import React, { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MenuCard from "./MenuCard";
-
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
-
-const menuItems = [
-  {
-    id: 1,
-    name: "Margherita Pizza",
-    description:
-      "Fresh mozzarella, tomato sauce, basil, and extra virgin olive oil",
-    price: 12.99,
-    category: "Food",
-    image:
-      "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=400&h=300&fit=crop",
-    popular: true,
-  },
- 
-  {
-    id: 7,
-    name: "Coca Cola",
-    description: "Chilled refreshing soft drink",
-    price: 2.5,
-    category: "Drinks",
-    image:
-      "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=400&h=300&fit=crop",
-    popular: false,
-  },
-  
-];
+import api from "../api/api";
 
 const Menu = ({ limit }) => {
+  const [menuItems, setMenuItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [activeCategory, setActiveCategory] = useState("All");
 
   const { addToCart } = useCart();
   const { darkMode } = useTheme();
 
+  useEffect(() => {
+    const getMenuItems = async () => {
+      try {
+        const response = await api.get("/getitem");
+
+        const items = response.data.data.map((item) => ({
+          id: item.id,
+          name: item.name,
+          description: item.deSscription,
+          price: item.price,
+          categoryId: item.categoryId,
+          category: item.categoryId === 1 ? "Food" : "Drinks",
+          image: `http://localhost:5238/${item.imageUrl}`,
+          popular: false,
+        }));
+
+        setMenuItems(items);
+      } catch (error) {
+        console.error("Error fetching menu:", error);
+        setError("Failed to load menu.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getMenuItems();
+  }, []);
+
   const categories = useMemo(() => {
     return ["All", ...new Set(menuItems.map((item) => item.category))];
-  }, []);
+  }, [menuItems]);
 
   const filteredItems =
     activeCategory === "All"
@@ -50,59 +55,77 @@ const Menu = ({ limit }) => {
     ? filteredItems.slice(0, limit)
     : filteredItems;
 
- return (
-  <section
-    className={`min-h-screen transition-colors duration-300 ${
-      darkMode ? "bg-gray-950 text-white" : "bg-[#e7f2fd] text-gray-900"
-    }`}
-  >
-    {/* INNER CONTAINER */}
-    <div className="max-w-7xl mx-auto px-4 py-16">
+  if (loading) {
+    return (
+      <div className="text-center py-20">
+        <p>Loading menu...</p>
+      </div>
+    );
+  }
 
-      {/* Header */}
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold">
-          {limit ? "Featured Menu" : "Our Menu"}
-        </h2>
+  if (error) {
+    return (
+      <div className="text-center py-20 text-red-500">
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  return (
+    <section
+      className={`min-h-screen transition-colors duration-300 ${darkMode
+          ? "bg-gray-950 text-white"
+          : "bg-[#e7f2fd] text-gray-900"
+        }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 py-16">
+
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold">
+            {limit ? "Featured Menu" : "Our Menu"}
+          </h2>
+
+          {!limit && (
+            <p
+              className={`mt-2 ${darkMode ? "text-gray-400" : "text-gray-500"
+                }`}
+            >
+              Delicious food & refreshing drinks
+            </p>
+          )}
+        </div>
 
         {!limit && (
-          <p className={`mt-2 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-            Delicious food & refreshing drinks
-          </p>
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category)}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeCategory === category
+                    ? "bg-orange-500 text-white shadow-lg scale-105"
+                    : darkMode
+                      ? "bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-orange-400"
+                      : "bg-white text-gray-700 border hover:bg-gray-100 hover:text-orange-500"
+                  }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         )}
-      </div>
 
-      {/* Categories */}
-      {!limit && (
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                activeCategory === category
-                  ? "bg-orange-500 text-white shadow-lg scale-105"
-                  : darkMode
-                  ? "bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-orange-400"
-                  : "bg-white text-gray-700 border hover:bg-gray-100 hover:text-orange-500"
-              }`}
-            >
-              {category}
-            </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayItems.map((item) => (
+            <MenuCard
+              key={item.id}
+              item={item}
+            />
           ))}
         </div>
-      )}
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {displayItems.map((item) => (
-          <MenuCard key={item.id} item={item} />
-        ))}
       </div>
-
-    </div>
-  </section>
-);
+    </section>
+  );
 };
 
 export default Menu;

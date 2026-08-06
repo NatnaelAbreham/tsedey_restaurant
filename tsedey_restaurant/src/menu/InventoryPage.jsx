@@ -24,6 +24,7 @@ const InventoryPage = () => {
                 data.data.map((item) => ({
                     ...item,
                     quantity: item.quantity || 0,
+                    quantity_limit: item.quantity_limit ?? false,
                 }))
             );
         } catch (error) {
@@ -37,6 +38,20 @@ const InventoryPage = () => {
         setItems((prev) =>
             prev.map((item) =>
                 item.id === id ? { ...item, quantity: value } : item
+            )
+        );
+    };
+
+    const handleQuantityLimitChange = (id, checked) => {
+        setItems((prev) =>
+            prev.map((item) =>
+                item.id === id
+                    ? {
+                        ...item,
+                        quantity_limit: checked,
+                        quantity: checked ? item.quantity : 0,
+                    }
+                    : item
             )
         );
     };
@@ -55,6 +70,7 @@ const InventoryPage = () => {
                     body: JSON.stringify({
                         itemId: item.id,
                         quantity: Number(item.quantity),
+                        quantity_limit: item.quantity_limit,
                     }),
                 }
             );
@@ -118,6 +134,7 @@ const InventoryPage = () => {
                                         <th className="px-6 py-4 text-left">Image</th>
                                         <th className="px-6 py-4 text-left">Item</th>
                                         <th className="px-6 py-4 text-left">Price</th>
+                                        <th className="px-6 py-4 text-center">Quantity Limit</th>
                                         <th className="px-6 py-4 text-left">Quantity</th>
                                         <th className="px-6 py-4 text-center">Action</th>
                                     </tr>
@@ -132,8 +149,8 @@ const InventoryPage = () => {
                                         <tr
                                             key={item.id}
                                             className={`transition ${darkMode
-                                                    ? "hover:bg-gray-800/40"
-                                                    : "hover:bg-gray-100"
+                                                ? "hover:bg-gray-800/40"
+                                                : "hover:bg-gray-100"
                                                 } ${index % 2 === 0
                                                     ? darkMode
                                                         ? "bg-gray-900/20"
@@ -163,17 +180,50 @@ const InventoryPage = () => {
                                             <td className="px-6 py-5 font-semibold text-orange-500">
                                                 ETB {item.price}
                                             </td>
+                                            <td className="px-6 py-5 text-center">
+                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="sr-only peer"
+                                                        checked={item.quantity_limit}
+                                                        onChange={(e) =>
+                                                            handleQuantityLimitChange(item.id, e.target.checked)
+                                                        }
+                                                    />
 
+                                                    <div className="w-11 h-6 bg-gray-300 rounded-full
+            peer peer-checked:bg-orange-500
+            after:content-['']
+            after:absolute
+            after:top-[2px]
+            after:left-[2px]
+            after:bg-white
+            after:border
+            after:rounded-full
+            after:h-5
+            after:w-5
+            after:transition-all
+            peer-checked:after:translate-x-full">
+                                                    </div>
+                                                </label>
+                                            </td>
                                             {/* QUANTITY */}
                                             <td className="px-6 py-5">
                                                 <input
                                                     type="number"
                                                     min="0"
                                                     value={item.quantity}
+                                                    disabled={!item.quantity_limit}
                                                     onChange={(e) =>
                                                         handleQuantityChange(item.id, e.target.value)
                                                     }
-                                                    className={`w-28 px-3 py-2 rounded-xl border focus:outline-none focus:ring-2 focus:ring-orange-400 ${darkMode
+                                                    className={`w-28 px-3 py-2 rounded-xl border
+        focus:outline-none focus:ring-2 focus:ring-orange-400
+        ${!item.quantity_limit
+                                                            ? "opacity-50 cursor-not-allowed"
+                                                            : ""
+                                                        }
+        ${darkMode
                                                             ? "bg-gray-800 border-gray-700 text-white"
                                                             : "bg-white border-gray-200"
                                                         }`}
