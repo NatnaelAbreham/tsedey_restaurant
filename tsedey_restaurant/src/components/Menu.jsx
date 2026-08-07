@@ -22,12 +22,16 @@ const Menu = ({ limit }) => {
         const items = response.data.data.map((item) => ({
           id: item.id,
           name: item.name,
-          description: item.deSscription,
+          description: item.description,
           price: item.price,
           categoryId: item.categoryId,
           category: item.categoryId === 1 ? "Food" : "Drinks",
           image: `http://localhost:5238/${item.imageUrl}`,
           popular: false,
+
+          // stock information
+          isAvailable: item.isAvailable,
+          quantityAvailable: item.quantityAvailable
         }));
 
         setMenuItems(items);
@@ -74,8 +78,8 @@ const Menu = ({ limit }) => {
   return (
     <section
       className={`min-h-screen transition-colors duration-300 ${darkMode
-          ? "bg-gray-950 text-white"
-          : "bg-[#e7f2fd] text-gray-900"
+        ? "bg-gray-950 text-white"
+        : "bg-[#e7f2fd] text-gray-900"
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 py-16">
@@ -102,10 +106,10 @@ const Menu = ({ limit }) => {
                 key={category}
                 onClick={() => setActiveCategory(category)}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeCategory === category
-                    ? "bg-orange-500 text-white shadow-lg scale-105"
-                    : darkMode
-                      ? "bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-orange-400"
-                      : "bg-white text-gray-700 border hover:bg-gray-100 hover:text-orange-500"
+                  ? "bg-orange-500 text-white shadow-lg scale-105"
+                  : darkMode
+                    ? "bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-orange-400"
+                    : "bg-white text-gray-700 border hover:bg-gray-100 hover:text-orange-500"
                   }`}
               >
                 {category}
