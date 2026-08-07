@@ -10,16 +10,18 @@ const MenuCard = ({ item }) => {
   const { addToCart } = useCart();
 
   const handleAddToCart = () => {
+    if (!item.isAvailable) return;
+
     addToCart(item);
     setIsAdded(true);
+
     setTimeout(() => setIsAdded(false), 1500);
   };
 
   return (
     <div
-      className={`rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${
-        darkMode ? "bg-gray-900" : "bg-white"
-      }`}
+      className={`rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${darkMode ? "bg-gray-900" : "bg-white"
+        }`}
     >
       {/* IMAGE */}
       <div className="relative h-48 overflow-hidden">
@@ -40,9 +42,8 @@ const MenuCard = ({ item }) => {
       <div className="p-5">
         <div className="flex justify-between items-start mb-2">
           <h3
-            className={`text-xl font-bold ${
-              darkMode ? "text-white" : "text-gray-800"
-            }`}
+            className={`text-xl font-bold ${darkMode ? "text-white" : "text-gray-800"
+              }`}
           >
             {item.name}
           </h3>
@@ -51,33 +52,39 @@ const MenuCard = ({ item }) => {
             ${item.price}
           </span>
         </div>
-
         <p
-          className={`text-sm mb-4 line-clamp-2 ${
-            darkMode ? "text-gray-400" : "text-gray-500"
-          }`}
+          className={`text-sm mb-4 line-clamp-2 ${darkMode ? "text-gray-400" : "text-gray-500"
+            }`}
         >
           {item.description}
         </p>
 
+
+        {item.isAvailable && item.quantityAvailable !== null && (
+          <p className="text-xs text-gray-500 mt-2 mb-3">
+            {item.quantityAvailable} available
+          </p>
+        )}
+
         <div className="flex justify-between items-center">
           <span
-            className={`text-xs px-2 py-1 rounded-full ${
-              darkMode
-                ? "bg-gray-800 text-gray-400"
-                : "bg-gray-100 text-gray-500"
-            }`}
+            className={`text-xs px-2 py-1 rounded-full ${darkMode
+              ? "bg-gray-800 text-gray-400"
+              : "bg-gray-100 text-gray-500"
+              }`}
           >
             {item.category}
           </span>
 
           <button
+            disabled={!item.isAvailable}
             onClick={handleAddToCart}
-            className={`px-4 py-2 rounded-full font-medium transition-all duration-300 flex items-center space-x-1 ${
-              isAdded
+            className={`px-4 py-2 rounded-full font-medium transition-all duration-300 flex items-center space-x-1 ${!item.isAvailable
+              ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+              : isAdded
                 ? "bg-green-500 text-white"
                 : "bg-orange-500 text-white hover:bg-orange-600"
-            }`}
+              }`}
           >
             <svg
               className="w-4 h-4"
@@ -93,7 +100,13 @@ const MenuCard = ({ item }) => {
               />
             </svg>
 
-            <span>{isAdded ? "Added!" : "Add to Cart"}</span>
+            <span>
+              {!item.isAvailable
+                ? "Out of Stock"
+                : isAdded
+                  ? "Added!"
+                  : "Add to Cart"}
+            </span>
           </button>
         </div>
       </div>
