@@ -14,37 +14,50 @@ const Menu = ({ limit }) => {
   const { addToCart } = useCart();
   const { darkMode } = useTheme();
 
-  useEffect(() => {
+
+useEffect(() => {
     const getMenuItems = async () => {
-      try {
-        const response = await api.get("/getitem");
+        try {
+            const response = await api.get("/getitem");
 
-        const items = response.data.data.map((item) => ({
-          id: item.id,
-          name: item.name,
-          description: item.description,
-          price: item.price,
-          categoryId: item.categoryId,
-          category: item.categoryId === 1 ? "Food" : "Drinks",
-          image: `http://localhost:5238/${item.imageUrl}`,
-          popular: false,
+            const items = response.data.data.map((item) => ({
+                id: item.id,
+                name: item.name,
+                description: item.description,
+                price: item.price,
+                categoryId: item.categoryId,
+                category: item.categoryId === 1 ? "Food" : "Drinks",
+                image: `http://localhost:5238/${item.imageUrl}`,
+                popular: false,
 
-          // stock information
-          isAvailable: item.isAvailable,
-          quantityAvailable: item.quantityAvailable
-        }));
+                // Stock information
+                isAvailable: item.isAvailable,
+                quantityAvailable: item.quantityAvailable
+            }));
 
-        setMenuItems(items);
-      } catch (error) {
-        console.error("Error fetching menu:", error);
-        setError("Failed to load menu.");
-      } finally {
-        setLoading(false);
-      }
+            setMenuItems(items);
+        } catch (error) {
+            console.error("Error fetching menu:", error);
+            setError("Failed to load menu.");
+        } finally {
+            setLoading(false);
+        }
     };
 
+    // Load immediately
     getMenuItems();
-  }, []);
+
+    // Refresh every 5 seconds
+    const interval = setInterval(() => {
+        getMenuItems();
+    }, 5000);
+
+    // Cleanup when component is removed
+    return () => clearInterval(interval);
+
+}, []);
+
+
 
   const categories = useMemo(() => {
     return ["All", ...new Set(menuItems.map((item) => item.category))];
