@@ -25,17 +25,15 @@ const CartSidebar = ({
 
       {/* SIDEBAR */}
       <div
-        className={`fixed top-0 right-0 h-screen w-full max-w-md shadow-2xl z-50 transition-all duration-300 overflow-hidden ${
-          darkMode ? "bg-gray-950 text-white" : "bg-white text-gray-900"
-        }`}
+        className={`fixed top-0 right-0 h-screen w-full max-w-md shadow-2xl z-50 transition-all duration-300 overflow-hidden ${darkMode ? "bg-gray-950 text-white" : "bg-white text-gray-900"
+          }`}
       >
         <div className="flex flex-col h-full">
 
           {/* HEADER */}
           <div
-            className={`flex items-center justify-between border-b p-5 ${
-              darkMode ? "border-gray-800" : "border-gray-200"
-            }`}
+            className={`flex items-center justify-between border-b p-5 ${darkMode ? "border-gray-800" : "border-gray-200"
+              }`}
           >
             <h2 className="flex items-center gap-2 text-2xl font-bold">
               <svg
@@ -56,11 +54,10 @@ const CartSidebar = ({
 
             <button
               onClick={onClose}
-              className={`transition ${
-                darkMode
+              className={`transition ${darkMode
                   ? "text-gray-400 hover:text-white"
                   : "text-gray-400 hover:text-gray-700"
-              }`}
+                }`}
             >
               ✕
             </button>
@@ -85,9 +82,8 @@ const CartSidebar = ({
                 {cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className={`flex gap-4 rounded-2xl p-3 transition ${
-                      darkMode ? "bg-gray-900" : "bg-gray-50"
-                    }`}
+                    className={`flex gap-4 rounded-2xl p-3 transition ${darkMode ? "bg-gray-900" : "bg-gray-50"
+                      }`}
                   >
                     {/* IMAGE */}
                     <img
@@ -119,36 +115,54 @@ const CartSidebar = ({
 
                       {/* QUANTITY */}
                       <div className="mt-3 flex items-center gap-3">
+                        {/* MINUS */}
                         <button
                           onClick={() =>
                             updateQuantity(item.id, item.quantity - 1)
                           }
-                          className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                            darkMode
-                              ? "bg-gray-800 hover:bg-gray-700"
-                              : "bg-gray-200 hover:bg-gray-300"
-                          }`}
+                          disabled={item.quantity <= 1}
+                          className={`h-8 w-8 rounded-full flex items-center justify-center ${item.quantity <= 1
+                              ? "bg-gray-300 text-gray-400 cursor-not-allowed"
+                              : darkMode
+                                ? "bg-gray-800 hover:bg-gray-700"
+                                : "bg-gray-200 hover:bg-gray-300"
+                            }`}
                         >
                           -
                         </button>
 
+                        {/* CURRENT QUANTITY */}
                         <span className="w-5 text-center">
                           {item.quantity}
                         </span>
 
+                        {/* PLUS */}
                         <button
                           onClick={() =>
                             updateQuantity(item.id, item.quantity + 1)
                           }
-                          className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                            darkMode
-                              ? "bg-gray-800 hover:bg-gray-700"
-                              : "bg-gray-200 hover:bg-gray-300"
-                          }`}
+                          disabled={
+                            item.quantityAvailable !== null &&
+                            item.quantity >= item.quantityAvailable
+                          }
+                          className={`h-8 w-8 rounded-full flex items-center justify-center ${item.quantityAvailable !== null &&
+                              item.quantity >= item.quantityAvailable
+                              ? "bg-gray-300 text-gray-400 cursor-not-allowed"
+                              : darkMode
+                                ? "bg-gray-800 hover:bg-gray-700"
+                                : "bg-gray-200 hover:bg-gray-300"
+                            }`}
                         >
                           +
                         </button>
                       </div>
+
+                      {/* STOCK INFORMATION */}
+                      {item.quantityAvailable !== null && (
+                        <p className="mt-2 text-xs text-gray-500">
+                          {item.quantityAvailable - item.quantity} available
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -160,9 +174,8 @@ const CartSidebar = ({
           {/* FOOTER */}
           {cartItems.length > 0 && (
             <div
-              className={`border-t p-5 space-y-4 ${
-                darkMode ? "border-gray-800" : "border-gray-200"
-              }`}
+              className={`border-t p-5 space-y-4 ${darkMode ? "border-gray-800" : "border-gray-200"
+                }`}
             >
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
