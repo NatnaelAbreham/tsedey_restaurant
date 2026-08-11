@@ -6,7 +6,7 @@ import AppRoutes from "./routes/AppRoutes";
 import CartSidebar from "./components/CartSidebar";
 import OrderSuccess from "./components/OrderSuccess";
 import Footer from "./components/Footer";
-import { useCart,CartProvider } from "./context/CartContext";
+import { useCart, CartProvider } from "./context/CartContext";
 import { ThemeProvider } from "./context/ThemeContext";
 
 const Layout = () => {
@@ -36,9 +36,20 @@ const Layout = () => {
         updateQuantity={updateQuantity}
         removeItem={removeItem}
         totalPrice={totalPrice}
-        onPlaceOrder={handlePlaceOrder}
+        /* onPlaceOrder={handlePlaceOrder} */
+        onPlaceOrder={() => setIsPaymentOpen(true)}
       />
 
+      <PaymentMethod
+        isOpen={isPaymentOpen}
+        onClose={() => setIsPaymentOpen(false)}
+        onCashSelected={() => {
+          setIsPaymentOpen(false);
+
+          // Next step:
+          // open order confirmation
+        }}
+      />
       {showSuccess && (
         <OrderSuccess onClose={() => setShowSuccess(false)} />
       )}
