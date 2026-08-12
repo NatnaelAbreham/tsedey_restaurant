@@ -128,7 +128,7 @@ const OrderConfirmation = ({
                     />
 
                     {phoneError && (
-                        <p className="mt-2 text-sm text-red-500">
+                        <p className="mt-2 text-sm text-red-500" style ={{ color: "red" }}>
                             Enter a valid number:
                             <br />
                             +2519XXXXXXXX, 2519XXXXXXXX or 09XXXXXXXX
