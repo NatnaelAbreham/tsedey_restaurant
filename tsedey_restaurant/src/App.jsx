@@ -1,15 +1,18 @@
+import { useState } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
-
 
 import Navbar from "./components/Navbar";
 import AppRoutes from "./routes/AppRoutes";
 import CartSidebar from "./components/CartSidebar";
 import OrderSuccess from "./components/OrderSuccess";
+import PaymentMethod from "./components/PaymentMethod";
 import Footer from "./components/Footer";
 import { useCart, CartProvider } from "./context/CartContext";
 import { ThemeProvider } from "./context/ThemeContext";
 
 const Layout = () => {
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [isOrderConfirmationOpen, setIsOrderConfirmationOpen] = useState(false);
   const {
     isCartOpen,
     setIsCartOpen,
@@ -45,9 +48,7 @@ const Layout = () => {
         onClose={() => setIsPaymentOpen(false)}
         onCashSelected={() => {
           setIsPaymentOpen(false);
-
-          // Next step:
-          // open order confirmation
+          setIsOrderConfirmationOpen(true);
         }}
       />
       {showSuccess && (

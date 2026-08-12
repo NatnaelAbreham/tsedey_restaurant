@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Home from "../pages/Home";
 import Menu from "../components/Menu";
+/* import PaymentMethod from "../components/PaymentMethod"; */
 import ContactPage from "../pages/ContactPage";
 import AddMenu from '../menu/AddMenu.jsx';
 import InventoryPage from '../menu/InventoryPage.jsx';
