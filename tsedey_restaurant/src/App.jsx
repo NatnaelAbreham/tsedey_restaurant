@@ -6,6 +6,7 @@ import AppRoutes from "./routes/AppRoutes";
 import CartSidebar from "./components/CartSidebar";
 import OrderSuccess from "./components/OrderSuccess";
 import PaymentMethod from "./components/PaymentMethod";
+import OrderConfirmation from "./components/OrderConfirmation";
 import Footer from "./components/Footer";
 import { useCart, CartProvider } from "./context/CartContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -50,6 +51,13 @@ const Layout = () => {
           setIsPaymentOpen(false);
           setIsOrderConfirmationOpen(true);
         }}
+      />
+
+      <OrderConfirmation
+        isOpen={isOrderConfirmationOpen}
+        onClose={() => setIsOrderConfirmationOpen(false)}
+        cartItems={cartItems}
+        totalPrice={totalPrice}
       />
       {showSuccess && (
         <OrderSuccess onClose={() => setShowSuccess(false)} />
