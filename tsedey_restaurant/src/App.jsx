@@ -68,6 +68,30 @@ const Layout = () => {
   );
 };
 
+
+const [phoneNumber, setPhoneNumber] = useState("");
+const [phoneError, setPhoneError] = useState("");
+
+const phoneRegex = /^(?:\+2519\d{8}|2519\d{8}|09\d{8})$/;
+
+const handlePhoneChange = (e) => {
+  const value = e.target.value;
+
+  setPhoneNumber(value);
+
+  if (value === "") {
+    setPhoneError("");
+    return;
+  }
+
+  if (!phoneRegex.test(value)) {
+    setPhoneError(
+      "Enter a valid phone number"
+    );
+  } else {
+    setPhoneError("");
+  }
+};
 const App = () => {
   return (
     <ThemeProvider>
