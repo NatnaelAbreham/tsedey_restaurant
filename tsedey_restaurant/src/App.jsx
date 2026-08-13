@@ -21,14 +21,14 @@ const Layout = () => {
     updateQuantity,
     removeItem,
     totalPrice,
-    handlePlaceOrder,
+    /* handlePlaceOrder, */
     showSuccess,
     setShowSuccess,
-    totalItems
+    /* totalItems */
   } = useCart();
 
 
- 
+
 
   return (
     <>
