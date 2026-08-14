@@ -11,6 +11,12 @@ const OrderConfirmation = ({
     const [phoneNumber, setPhoneNumber] = useState("");
     const [phoneError, setPhoneError] = useState("");
 
+    const [otp, setOtp] = useState("");
+    const [otpSent, setOtpSent] = useState(false);
+    const [otpError, setOtpError] = useState("");
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [isVerified, setIsVerified] = useState(false);
+
     const phoneRegex = /^(?:\+2519\d{8}|2519\d{8}|09\d{8})$/;
 
     const handlePhoneChange = (e) => {
@@ -34,10 +40,32 @@ const OrderConfirmation = ({
 
     if (!isOpen) return null;
 
-    const handleSendOTP = () => {
-        console.log("Phone number:", phoneNumber);
+    const handleSendOtp = async () => {
+        if (!phoneRegex.test(phoneNumber)) {
+            setPhoneError("Enter a valid phone number");
+            return;
+        }
 
-        // We will connect the OTP API here later
+        try {
+            // We will connect the real SMS endpoint later.
+            // For now, your backend can generate/store the OTP.
+
+            const response = await api.post("/sendotp", {
+                phoneNumber: phoneNumber
+            });
+
+            if (response.data.success) {
+                setOtpSent(true);
+                setOtpError("");
+            }
+        } catch (error) {
+            console.error("Error sending OTP:", error);
+
+            setOtpError(
+                error.response?.data?.message ||
+                "Failed to send OTP"
+            );
+        }
     };
 
     return (
@@ -128,7 +156,7 @@ const OrderConfirmation = ({
                     />
 
                     {phoneError && (
-                        <p className="mt-2 text-sm text-red-500" style ={{ color: "red" }}>
+                        <p className="mt-2 text-sm text-red-500" style={{ color: "red" }}>
                             Enter a valid number:
                             <br />
                             +2519XXXXXXXX, 2519XXXXXXXX or 09XXXXXXXX
