@@ -137,11 +137,10 @@ const OrderConfirmation = ({
 
             {/* MODAL */}
             <div
-                className={`relative w-full max-w-md mx-4 rounded-2xl shadow-2xl p-6 ${
-                    darkMode
+                className={`relative w-full max-w-md mx-4 rounded-2xl shadow-2xl p-6 ${darkMode
                         ? "bg-gray-900 text-white"
                         : "bg-white text-gray-900"
-                }`}
+                    }`}
             >
 
                 {/* HEADER */}
@@ -153,11 +152,10 @@ const OrderConfirmation = ({
 
                     <button
                         onClick={onClose}
-                        className={`text-xl ${
-                            darkMode
+                        className={`text-xl ${darkMode
                                 ? "text-gray-400 hover:text-white"
                                 : "text-gray-400 hover:text-gray-700"
-                        }`}
+                            }`}
                     >
                         ✕
                     </button>
@@ -171,11 +169,10 @@ const OrderConfirmation = ({
 
                         <div
                             key={item.id}
-                            className={`flex justify-between items-center p-3 rounded-xl ${
-                                darkMode
+                            className={`flex justify-between items-center p-3 rounded-xl ${darkMode
                                     ? "bg-gray-800"
                                     : "bg-gray-50"
-                            }`}
+                                }`}
                         >
 
                             <div>
@@ -202,11 +199,10 @@ const OrderConfirmation = ({
 
                 {/* TOTAL */}
                 <div
-                    className={`flex justify-between border-t pt-4 mb-6 ${
-                        darkMode
+                    className={`flex justify-between border-t pt-4 mb-6 ${darkMode
                             ? "border-gray-700"
                             : "border-gray-200"
-                    }`}
+                        }`}
                 >
 
                     <span className="text-lg font-bold">
@@ -233,11 +229,10 @@ const OrderConfirmation = ({
                             onChange={handlePhoneChange}
                             placeholder="09.........."
                             disabled={otpSent}
-                            className={`w-full rounded-xl border px-4 py-3 ${
-                                otpSent
+                            className={`w-full rounded-xl border px-4 py-3 ${otpSent
                                     ? "bg-gray-200 cursor-not-allowed"
                                     : ""
-                            }`}
+                                }`}
                         />
 
                         {phoneError && (
@@ -330,11 +325,10 @@ const OrderConfirmation = ({
                     <div className="mb-5">
 
                         <div
-                            className={`rounded-xl p-4 text-center ${
-                                darkMode
+                            className={`rounded-xl p-4 text-center ${darkMode
                                     ? "bg-green-500/10 text-green-400"
                                     : "bg-green-100 text-green-700"
-                            }`}
+                                }`}
                         >
                             ✓ Phone number verified successfully
                         </div>
@@ -342,15 +336,21 @@ const OrderConfirmation = ({
                     </div>
 
                 )}
-
+                {isVerified && (
+                    <button
+                        onClick={handleCreateOrder}
+                        className="w-full rounded-xl bg-orange-500 py-3 font-semibold text-white hover:bg-orange-600 transition"
+                    >
+                        Confirm Order
+                    </button>
+                )}
                 {/* CANCEL */}
                 <button
                     onClick={onClose}
-                    className={`w-full mt-3 py-2 text-sm ${
-                        darkMode
+                    className={`w-full mt-3 py-2 text-sm ${darkMode
                             ? "text-gray-400 hover:text-white"
                             : "text-gray-500 hover:text-gray-800"
-                    }`}
+                        }`}
                 >
                     Cancel
                 </button>
