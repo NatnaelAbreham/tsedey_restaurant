@@ -26,7 +26,7 @@ const Layout = () => {
     setShowSuccess,
     /* totalItems */
   } = useCart();
-
+  const [orderResult, setOrderResult] = useState(null);
 
 
 
