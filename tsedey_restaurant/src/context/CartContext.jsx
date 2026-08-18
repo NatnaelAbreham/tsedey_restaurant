@@ -6,7 +6,9 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
+  const clearCart = () => {
+    setCartItems([]);
+  };
   const addToCart = (item) => {
     setCartItems(prev => {
       const existing = prev.find(i => i.id === item.id);
@@ -66,7 +68,8 @@ export const CartProvider = ({ children }) => {
         removeItem,
         handlePlaceOrder,
         totalItems,
-        totalPrice
+        totalPrice,
+        clearCart,
       }}
     >
       {children}

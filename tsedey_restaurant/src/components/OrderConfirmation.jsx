@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import api from "../api/api";
+import { useCart } from "../context/CartContext";
 
 const OrderConfirmation = ({
     isOpen,
     onClose,
     cartItems,
     totalPrice,
+    onOrderCreated,
 }) => {
     const { darkMode } = useTheme();
 
@@ -117,13 +119,8 @@ const OrderConfirmation = ({
 
             const orderResponse = await api.post("/createorder", {
                 phoneNumber: phoneNumber,
-
                 accountNumber: null,
-
                 paymentMethod: "Cash",
-
-                // Backend calculates the real amount,
-                // so this value is not trusted.
                 totalAmount: totalPrice,
 
                 items: cartItems.map((item) => ({
@@ -134,23 +131,21 @@ const OrderConfirmation = ({
 
             if (orderResponse.data.success) {
 
-                console.log(
-                    "Order created:",
-                    orderResponse.data.data
-                );
+                const order = orderResponse.data.data;
 
-                // ==========================================
-                // STEP 3: CLOSE CONFIRMATION
-                // ==========================================
+                console.log("Order created:", order);
 
                 setIsVerified(true);
 
+                // Clear cart only AFTER backend confirms order creation
+                clearCart();
+
+                // Close confirmation modal
                 onClose();
 
-                // We will show OrderSuccess here
-                // in the next step.
+                // Show success information
+                onOrderCreated(order);
             }
-
         } catch (error) {
 
             console.error(
