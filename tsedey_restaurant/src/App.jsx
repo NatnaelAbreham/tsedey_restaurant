@@ -61,6 +61,10 @@ const Layout = () => {
         onClose={() => setIsOrderConfirmationOpen(false)}
         cartItems={cartItems}
         totalPrice={totalPrice}
+        onOrderCreated={(order) => {
+          setOrderResult(order);
+          setShowSuccess(true);
+        }}
       />
       {showSuccess && (
         <OrderSuccess onClose={() => setShowSuccess(false)} />
