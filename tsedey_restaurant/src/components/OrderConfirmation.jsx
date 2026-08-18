@@ -95,30 +95,74 @@ const OrderConfirmation = ({
             setIsVerifying(true);
             setOtpError("");
 
-            const response = await api.post("/verifyotp", {
+            // ==========================================
+            // STEP 1: VERIFY OTP
+            // ==========================================
+
+            const otpResponse = await api.post("/verifyotp", {
                 phoneNumber: phoneNumber,
                 otp: otp
             });
 
-            if (response.data.success) {
+            if (!otpResponse.data.success) {
+                setOtpError(
+                    otpResponse.data.message || "Invalid OTP"
+                );
+                return;
+            }
+
+            // ==========================================
+            // STEP 2: CREATE ORDER
+            // ==========================================
+
+            const orderResponse = await api.post("/createorder", {
+                phoneNumber: phoneNumber,
+
+                accountNumber: null,
+
+                paymentMethod: "Cash",
+
+                // Backend calculates the real amount,
+                // so this value is not trusted.
+                totalAmount: totalPrice,
+
+                items: cartItems.map((item) => ({
+                    itemId: item.id,
+                    quantity: item.quantity
+                }))
+            });
+
+            if (orderResponse.data.success) {
+
+                console.log(
+                    "Order created:",
+                    orderResponse.data.data
+                );
+
+                // ==========================================
+                // STEP 3: CLOSE CONFIRMATION
+                // ==========================================
 
                 setIsVerified(true);
-                setOtpError("");
 
-                console.log("OTP verified successfully");
-            } else {
-                setOtpError(
-                    response.data.message || "Invalid OTP"
-                );
+                onClose();
+
+                // We will show OrderSuccess here
+                // in the next step.
             }
 
         } catch (error) {
-            console.error("OTP verification failed:", error);
+
+            console.error(
+                "Order creation failed:",
+                error
+            );
 
             setOtpError(
                 error.response?.data?.message ||
-                "Invalid OTP"
+                "Failed to create order"
             );
+
         } finally {
             setIsVerifying(false);
         }
@@ -138,8 +182,8 @@ const OrderConfirmation = ({
             {/* MODAL */}
             <div
                 className={`relative w-full max-w-md mx-4 rounded-2xl shadow-2xl p-6 ${darkMode
-                        ? "bg-gray-900 text-white"
-                        : "bg-white text-gray-900"
+                    ? "bg-gray-900 text-white"
+                    : "bg-white text-gray-900"
                     }`}
             >
 
@@ -153,8 +197,8 @@ const OrderConfirmation = ({
                     <button
                         onClick={onClose}
                         className={`text-xl ${darkMode
-                                ? "text-gray-400 hover:text-white"
-                                : "text-gray-400 hover:text-gray-700"
+                            ? "text-gray-400 hover:text-white"
+                            : "text-gray-400 hover:text-gray-700"
                             }`}
                     >
                         ✕
@@ -170,8 +214,8 @@ const OrderConfirmation = ({
                         <div
                             key={item.id}
                             className={`flex justify-between items-center p-3 rounded-xl ${darkMode
-                                    ? "bg-gray-800"
-                                    : "bg-gray-50"
+                                ? "bg-gray-800"
+                                : "bg-gray-50"
                                 }`}
                         >
 
@@ -200,8 +244,8 @@ const OrderConfirmation = ({
                 {/* TOTAL */}
                 <div
                     className={`flex justify-between border-t pt-4 mb-6 ${darkMode
-                            ? "border-gray-700"
-                            : "border-gray-200"
+                        ? "border-gray-700"
+                        : "border-gray-200"
                         }`}
                 >
 
@@ -230,8 +274,8 @@ const OrderConfirmation = ({
                             placeholder="09.........."
                             disabled={otpSent}
                             className={`w-full rounded-xl border px-4 py-3 ${otpSent
-                                    ? "bg-gray-200 cursor-not-allowed"
-                                    : ""
+                                ? "bg-gray-200 cursor-not-allowed"
+                                : ""
                                 }`}
                         />
 
@@ -326,8 +370,8 @@ const OrderConfirmation = ({
 
                         <div
                             className={`rounded-xl p-4 text-center ${darkMode
-                                    ? "bg-green-500/10 text-green-400"
-                                    : "bg-green-100 text-green-700"
+                                ? "bg-green-500/10 text-green-400"
+                                : "bg-green-100 text-green-700"
                                 }`}
                         >
                             ✓ Phone number verified successfully
@@ -348,8 +392,8 @@ const OrderConfirmation = ({
                 <button
                     onClick={onClose}
                     className={`w-full mt-3 py-2 text-sm ${darkMode
-                            ? "text-gray-400 hover:text-white"
-                            : "text-gray-500 hover:text-gray-800"
+                        ? "text-gray-400 hover:text-white"
+                        : "text-gray-500 hover:text-gray-800"
                         }`}
                 >
                     Cancel
