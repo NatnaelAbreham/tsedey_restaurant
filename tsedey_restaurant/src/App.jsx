@@ -67,7 +67,13 @@ const Layout = () => {
         }}
       />
       {showSuccess && (
-        <OrderSuccess onClose={() => setShowSuccess(false)} />
+        <OrderSuccess
+          order={orderResult}
+          onClose={() => {
+            setShowSuccess(false);
+            setOrderResult(null);
+          }}
+        />
       )}
 
       <Footer />

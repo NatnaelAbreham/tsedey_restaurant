@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
 import api from "../api/api";
 import { useCart } from "../context/CartContext";
@@ -25,6 +25,19 @@ const OrderConfirmation = ({
     const [isVerified, setIsVerified] = useState(false);
     const [isSendingOtp, setIsSendingOtp] = useState(false);
 
+    useEffect(() => {
+        if (isOpen) {
+            setPhoneNumber("");
+            setPhoneError("");
+
+            setOtp("");
+            setOtpSent(false);
+            setOtpError("");
+
+            setIsVerifying(false);
+            setIsVerified(false);
+        }
+    }, [isOpen]);
     const phoneRegex = /^(?:\+2519\d{8}|2519\d{8}|09\d{8})$/;
 
     // ==========================================
@@ -380,7 +393,7 @@ const OrderConfirmation = ({
                 )}
                 {isVerified && (
                     <button
-                        
+
                         className="w-full rounded-xl bg-orange-500 py-3 font-semibold text-white hover:bg-orange-600 transition"
                     >
                         Confirm Order
