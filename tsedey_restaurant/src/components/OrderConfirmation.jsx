@@ -10,7 +10,10 @@ const OrderConfirmation = ({
     totalPrice,
     onOrderCreated,
 }) => {
+
+
     const { darkMode } = useTheme();
+    const { clearCart } = useCart();
 
     const [phoneNumber, setPhoneNumber] = useState("");
     const [phoneError, setPhoneError] = useState("");
@@ -377,7 +380,7 @@ const OrderConfirmation = ({
                 )}
                 {isVerified && (
                     <button
-                        onClick={handleCreateOrder}
+                        
                         className="w-full rounded-xl bg-orange-500 py-3 font-semibold text-white hover:bg-orange-600 transition"
                     >
                         Confirm Order
