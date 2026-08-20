@@ -14,11 +14,30 @@ export const CartProvider = ({ children }) => {
       const existing = prev.find(i => i.id === item.id);
 
       if (existing) {
+
+        // Limited stock
+        if (
+          item.quantity_limit === true &&
+          item.quantityAvailable !== null &&
+          existing.quantity >= item.quantityAvailable
+        ) {
+          return prev;
+        }
+
         return prev.map(i =>
           i.id === item.id
             ? { ...i, quantity: i.quantity + 1 }
             : i
         );
+      }
+
+      // If limited and no stock available, don't add
+      if (
+        item.quantity_limit === true &&
+        item.quantityAvailable !== null &&
+        item.quantityAvailable <= 0
+      ) {
+        return prev;
       }
 
       return [...prev, { ...item, quantity: 1 }];
@@ -27,9 +46,33 @@ export const CartProvider = ({ children }) => {
 
   const updateQuantity = (id, qty) => {
     setCartItems(prev =>
-      qty === 0
-        ? prev.filter(i => i.id !== id)
-        : prev.map(i => i.id === id ? { ...i, quantity: qty } : i)
+      prev.flatMap(item => {
+
+        if (item.id !== id) {
+          return [item];
+        }
+
+        // Remove item
+        if (qty <= 0) {
+          return [];
+        }
+
+        // Limited stock
+        if (
+          item.quantity_limit === true &&
+          item.quantityAvailable !== null &&
+          qty > item.quantityAvailable
+        ) {
+          return [item];
+        }
+
+        return [
+          {
+            ...item,
+            quantity: qty
+          }
+        ];
+      })
     );
   };
 

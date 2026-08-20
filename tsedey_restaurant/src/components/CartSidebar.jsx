@@ -55,8 +55,8 @@ const CartSidebar = ({
             <button
               onClick={onClose}
               className={`transition ${darkMode
-                  ? "text-gray-400 hover:text-white"
-                  : "text-gray-400 hover:text-gray-700"
+                ? "text-gray-400 hover:text-white"
+                : "text-gray-400 hover:text-gray-700"
                 }`}
             >
               ✕
@@ -122,10 +122,10 @@ const CartSidebar = ({
                           }
                           disabled={item.quantity <= 1}
                           className={`h-8 w-8 rounded-full flex items-center justify-center ${item.quantity <= 1
-                              ? "bg-gray-300 text-gray-400 cursor-not-allowed"
-                              : darkMode
-                                ? "bg-gray-800 hover:bg-gray-700"
-                                : "bg-gray-200 hover:bg-gray-300"
+                            ? "bg-gray-300 text-gray-400 cursor-not-allowed"
+                            : darkMode
+                              ? "bg-gray-800 hover:bg-gray-700"
+                              : "bg-gray-200 hover:bg-gray-300"
                             }`}
                         >
                           -
@@ -142,15 +142,17 @@ const CartSidebar = ({
                             updateQuantity(item.id, item.quantity + 1)
                           }
                           disabled={
+                            item.quantity_limit === true &&
                             item.quantityAvailable !== null &&
                             item.quantity >= item.quantityAvailable
                           }
-                          className={`h-8 w-8 rounded-full flex items-center justify-center ${item.quantityAvailable !== null &&
-                              item.quantity >= item.quantityAvailable
-                              ? "bg-gray-300 text-gray-400 cursor-not-allowed"
-                              : darkMode
-                                ? "bg-gray-800 hover:bg-gray-700"
-                                : "bg-gray-200 hover:bg-gray-300"
+                          className={`h-8 w-8 rounded-full flex items-center justify-center ${item.quantity_limit === true &&
+                            item.quantityAvailable !== null &&
+                            item.quantity >= item.quantityAvailable
+                            ? "bg-gray-300 text-gray-400 cursor-not-allowed"
+                            : darkMode
+                              ? "bg-gray-800 hover:bg-gray-700"
+                              : "bg-gray-200 hover:bg-gray-300"
                             }`}
                         >
                           +
@@ -158,11 +160,16 @@ const CartSidebar = ({
                       </div>
 
                       {/* STOCK INFORMATION */}
-                      {item.quantityAvailable !== null && (
-                        <p className="mt-2 text-xs text-gray-500">
-                          {item.quantityAvailable - item.quantity} available
-                        </p>
-                      )}
+                      {item.quantity_limit === true &&
+                        item.quantityAvailable !== null && (
+                          <p className="mt-2 text-xs text-gray-500">
+                            {Math.max(
+                              0,
+                              item.quantityAvailable - item.quantity
+                            )}{" "}
+                            available
+                          </p>
+                        )}
                     </div>
                   </div>
                 ))}
