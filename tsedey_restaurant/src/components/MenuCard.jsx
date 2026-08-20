@@ -12,16 +12,16 @@ const MenuCard = ({ item }) => {
 
   // Find this item in the cart
   const cartItem = cartItems?.find(
-    (cartItem) => cartItem.id === item.id
-  );
+  (cartItem) => cartItem.id === item.id
+);
 
-  const currentQuantity = cartItem?.quantity || 0;
+const currentQuantity = cartItem?.quantity || 0;
 
-  // Check whether customer reached available stock
- const quantityLimitReached =
-    item.quantity_limit === true &&
-    currentQuantity >= (item.quantityAvailable ?? 0);
-
+const quantityLimitReached =
+  item.quantityLimit === true &&
+  item.quantityAvailable !== null &&
+  currentQuantity >= item.quantityAvailable;
+  
   const handleAddToCart = () => {
     // Item is unavailable
     if (!item.isAvailable) return;

@@ -31,6 +31,7 @@ useEffect(() => {
                 popular: false,
 
                 // Stock information
+                quantityLimit: item.quantityLimit,
                 isAvailable: item.isAvailable,
                 quantityAvailable: item.quantityAvailable
             }));

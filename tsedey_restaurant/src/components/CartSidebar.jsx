@@ -80,6 +80,7 @@ const CartSidebar = ({
               <div className="space-y-4">
 
                 {cartItems.map((item) => (
+                  
                   <div
                     key={item.id}
                     className={`flex gap-4 rounded-2xl p-3 transition ${darkMode ? "bg-gray-900" : "bg-gray-50"
@@ -142,11 +143,11 @@ const CartSidebar = ({
                             updateQuantity(item.id, item.quantity + 1)
                           }
                           disabled={
-                            item.quantity_limit === true &&
+                            item.quantityLimit === true &&
                             item.quantityAvailable !== null &&
                             item.quantity >= item.quantityAvailable
                           }
-                          className={`h-8 w-8 rounded-full flex items-center justify-center ${item.quantity_limit === true &&
+                          className={`h-8 w-8 rounded-full flex items-center justify-center ${item.quantityLimit === true &&
                             item.quantityAvailable !== null &&
                             item.quantity >= item.quantityAvailable
                             ? "bg-gray-300 text-gray-400 cursor-not-allowed"
@@ -160,7 +161,7 @@ const CartSidebar = ({
                       </div>
 
                       {/* STOCK INFORMATION */}
-                      {item.quantity_limit === true &&
+                      {item.quantityLimit === true &&
                         item.quantityAvailable !== null && (
                           <p className="mt-2 text-xs text-gray-500">
                             {Math.max(

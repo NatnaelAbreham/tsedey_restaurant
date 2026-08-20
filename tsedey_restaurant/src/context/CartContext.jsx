@@ -9,72 +9,59 @@ export const CartProvider = ({ children }) => {
   const clearCart = () => {
     setCartItems([]);
   };
+
+  
   const addToCart = (item) => {
-    setCartItems(prev => {
-      const existing = prev.find(i => i.id === item.id);
+  setCartItems(prev => {
+    const existing = prev.find(i => i.id === item.id);
 
-      if (existing) {
+    if (existing) {
 
-        // Limited stock
-        if (
-          item.quantity_limit === true &&
-          item.quantityAvailable !== null &&
-          existing.quantity >= item.quantityAvailable
-        ) {
-          return prev;
-        }
-
-        return prev.map(i =>
-          i.id === item.id
-            ? { ...i, quantity: i.quantity + 1 }
-            : i
-        );
-      }
-
-      // If limited and no stock available, don't add
+      // Limited stock
       if (
-        item.quantity_limit === true &&
-        item.quantityAvailable !== null &&
-        item.quantityAvailable <= 0
+        item.quantityLimit &&
+        existing.quantity >= item.quantityAvailable
       ) {
         return prev;
       }
 
-      return [...prev, { ...item, quantity: 1 }];
-    });
-  };
+      return prev.map(i =>
+        i.id === item.id
+          ? { ...i, quantity: i.quantity + 1 }
+          : i
+      );
+    }
+
+    return [...prev, { ...item, quantity: 1 }];
+  });
+};
 
   const updateQuantity = (id, qty) => {
-    setCartItems(prev =>
-      prev.flatMap(item => {
+  setCartItems(prev =>
+    prev
+      .map(item => {
+        if (item.id !== id) return item;
 
-        if (item.id !== id) {
-          return [item];
-        }
-
-        // Remove item
         if (qty <= 0) {
-          return [];
+          return null;
         }
 
-        // Limited stock
+        // Only enforce quantity when stock is limited
         if (
-          item.quantity_limit === true &&
-          item.quantityAvailable !== null &&
+          item.quantityLimit &&
           qty > item.quantityAvailable
         ) {
-          return [item];
+          return item;
         }
 
-        return [
-          {
-            ...item,
-            quantity: qty
-          }
-        ];
+        return {
+          ...item,
+          quantity: qty
+        };
       })
-    );
-  };
+      .filter(Boolean)
+  );
+};
 
   const removeItem = (id) => {
     setCartItems(prev => prev.filter(i => i.id !== id));
