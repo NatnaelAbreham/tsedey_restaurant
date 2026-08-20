@@ -18,9 +18,9 @@ const MenuCard = ({ item }) => {
   const currentQuantity = cartItem?.quantity || 0;
 
   // Check whether customer reached available stock
-  const quantityLimitReached =
-    item.quantityAvailable !== null &&
-    currentQuantity >= item.quantityAvailable;
+ const quantityLimitReached =
+    item.quantity_limit === true &&
+    currentQuantity >= (item.quantityAvailable ?? 0);
 
   const handleAddToCart = () => {
     // Item is unavailable
