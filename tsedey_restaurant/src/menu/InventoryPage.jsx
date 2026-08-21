@@ -70,7 +70,7 @@ const InventoryPage = () => {
                     body: JSON.stringify({
                         itemId: item.id,
                         quantity: Number(item.quantity),
-                        quantity_limit: item.quantity_limit,
+                        quantity_limit: Boolean(item.quantity_limit),
                     }),
                 }
             );
