@@ -6,6 +6,7 @@ import AppRoutes from "./routes/AppRoutes";
 import CartSidebar from "./components/CartSidebar";
 import OrderSuccess from "./components/OrderSuccess";
 import PaymentMethod from "./components/PaymentMethod";
+import InternalTransfer from "./components/InternalTransfer";
 import OrderConfirmation from "./components/OrderConfirmation";
 import Footer from "./components/Footer";
 import { useCart, CartProvider } from "./context/CartContext";
@@ -13,6 +14,11 @@ import { ThemeProvider } from "./context/ThemeContext";
 
 const Layout = () => {
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [isInternalTransferOpen, setIsInternalTransferOpen] =
+    useState(false);
+
+  const [transferAccountNumber, setTransferAccountNumber] =
+    useState("");
   const [isOrderConfirmationOpen, setIsOrderConfirmationOpen] = useState(false);
   const {
     isCartOpen,
@@ -58,7 +64,12 @@ const Layout = () => {
           console.log("Account number:", accountNumber);
         }}
       />
-
+      <InternalTransfer
+        isOpen={isInternalTransferOpen}
+        onClose={() => setIsInternalTransferOpen(false)}
+        accountNumber={transferAccountNumber}
+        totalPrice={totalPrice}
+      />
       <OrderConfirmation
         isOpen={isOrderConfirmationOpen}
         onClose={() => setIsOrderConfirmationOpen(false)}
