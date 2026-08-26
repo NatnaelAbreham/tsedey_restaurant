@@ -61,7 +61,9 @@ const Layout = () => {
           setIsOrderConfirmationOpen(true);
         }}
         onTransferSelected={(accountNumber) => {
-          console.log("Account number:", accountNumber);
+          setTransferAccountNumber(accountNumber);
+          setIsPaymentOpen(false);
+          setIsInternalTransferOpen(true);
         }}
       />
       <InternalTransfer
