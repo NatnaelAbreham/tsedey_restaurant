@@ -46,13 +46,16 @@ const Layout = () => {
         /* onPlaceOrder={handlePlaceOrder} */
         onPlaceOrder={() => setIsPaymentOpen(true)}
       />
-
       <PaymentMethod
         isOpen={isPaymentOpen}
         onClose={() => setIsPaymentOpen(false)}
+        totalPrice={totalPrice}
         onCashSelected={() => {
           setIsPaymentOpen(false);
           setIsOrderConfirmationOpen(true);
+        }}
+        onTransferSelected={(accountNumber) => {
+          console.log("Account number:", accountNumber);
         }}
       />
 
