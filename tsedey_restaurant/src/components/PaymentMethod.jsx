@@ -45,12 +45,29 @@ const PaymentMethod = ({
       return;
     }
 
-    if (account.length < 5) {
-      setAccountError("Please enter a valid account number");
+    if (!/^\d{13}$/.test(account)) {
+      setAccountError("Account number must be exactly 13 digits");
       return;
     }
 
     onTransferSelected(account);
+  };
+
+  const handleAccountNumberChange = (e) => {
+    // Only allow numbers
+    const value = e.target.value.replace(/\D/g, "");
+
+    // Maximum 13 digits
+    if (value.length <= 13) {
+      setAccountNumber(value);
+      setAccountError("");
+    }
+  };
+
+  const handleBack = () => {
+    setShowAccountInput(false);
+    setAccountNumber("");
+    setAccountError("");
   };
 
   return (
@@ -83,7 +100,9 @@ const PaymentMethod = ({
               className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"
                 }`}
             >
-              Choose how you would like to pay
+              {showAccountInput
+                ? "Enter your 13-digit account number"
+                : "Choose how you would like to pay"}
             </p>
           </div>
 
@@ -132,68 +151,37 @@ const PaymentMethod = ({
               </span>
             </button>
 
-            {/* TRANSFER */}
-            <div
-              className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 ${darkMode
-                  ? "border-gray-700 bg-gray-800"
-                  : "border-gray-200 bg-gray-50"
+            {/* INTERNAL TRANSFER */}
+            <button
+              onClick={handleTransfer}
+              className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 mb-4 ${darkMode
+                  ? "border-gray-700 bg-gray-800 hover:bg-gray-700"
+                  : "border-gray-200 bg-gray-50 hover:bg-orange-50 hover:border-orange-300"
                 }`}
             >
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-2xl">
                 🏦
               </div>
 
-              <div className="flex-1">
+              <div className="flex-1 text-left">
                 <h3 className="font-semibold text-lg">
-                  Bank Transfer
+                  Internal Transfer
                 </h3>
 
                 <p
-                  className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                  className={`text-sm ${darkMode
+                      ? "text-gray-400"
+                      : "text-gray-500"
                     }`}
                 >
-                  Enter your 13-digit account number
+                  Pay using your bank account
                 </p>
-
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={13}
-                  value={accountNumber}
-                  onChange={(e) => {
-                    const value = e.target.value
-                      .replace(/\D/g, "")
-                      .slice(0, 13);
-
-                    setAccountNumber(value);
-                  }}
-                  placeholder="Enter account number"
-                  className={`w-full mt-3 px-3 py-2 rounded-lg border outline-none ${darkMode
-                      ? "bg-gray-900 border-gray-700 text-white placeholder-gray-500"
-                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-400"
-                    }`}
-                />
-
-                {accountNumber.length > 0 && accountNumber.length < 13 && (
-                  <p className="text-xs text-red-500 mt-1">
-                    Account number must be exactly 13 digits
-                  </p>
-                )}
-
-                <button
-                  onClick={() => onTransferSelected(accountNumber)}
-                  disabled={accountNumber.length !== 13}
-                  className={`w-full mt-3 py-2 rounded-lg font-semibold transition ${accountNumber.length === 13
-                      ? "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
-                      : darkMode
-                        ? "bg-gray-700 text-gray-400 cursor-not-allowed"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    }`}
-                >
-                  Continue
-                </button>
               </div>
-            </div>
+
+              <span className="text-gray-400">
+                →
+              </span>
+            </button>
           </>
         ) : (
           <>
@@ -205,20 +193,42 @@ const PaymentMethod = ({
 
               <input
                 type="text"
+                inputMode="numeric"
                 value={accountNumber}
-                onChange={(e) => {
-                  setAccountNumber(e.target.value);
-                  setAccountError("");
-                }}
-                placeholder="Enter your account number"
-                className={`w-full rounded-xl border px-4 py-3 outline-none transition ${darkMode
-                    ? "bg-gray-800 border-gray-700 text-white"
-                    : "bg-white border-gray-300 text-gray-900"
+                onChange={handleAccountNumberChange}
+                placeholder="Enter 13-digit account number"
+                maxLength={13}
+                autoFocus
+                className={`w-full px-4 py-3 rounded-xl border outline-none transition ${darkMode
+                    ? "bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-blue-500"
+                    : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-blue-500"
                   }`}
               />
 
+              <div className="flex justify-between mt-2">
+                <p
+                  className={`text-xs ${darkMode
+                      ? "text-gray-500"
+                      : "text-gray-400"
+                    }`}
+                >
+                  Enter exactly 13 digits
+                </p>
+
+                <p
+                  className={`text-xs ${accountNumber.length === 13
+                      ? "text-green-500"
+                      : darkMode
+                        ? "text-gray-500"
+                        : "text-gray-400"
+                    }`}
+                >
+                  {accountNumber.length}/13
+                </p>
+              </div>
+
               {accountError && (
-                <p className="mt-2 text-sm text-red-500">
+                <p className="text-red-500 text-sm mt-2">
                   {accountError}
                 </p>
               )}
@@ -227,18 +237,20 @@ const PaymentMethod = ({
             {/* CONFIRM TRANSFER */}
             <button
               onClick={handleConfirmTransfer}
-              className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 transition"
+              disabled={accountNumber.length !== 13}
+              className={`w-full py-3 rounded-xl font-semibold transition ${accountNumber.length === 13
+                  ? "bg-orange-500 hover:bg-orange-600 text-white"
+                  : darkMode
+                    ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                }`}
             >
-              Continue with Transfer
+              Confirm Transfer
             </button>
 
             {/* BACK */}
             <button
-              onClick={() => {
-                setShowAccountInput(false);
-                setAccountNumber("");
-                setAccountError("");
-              }}
+              onClick={handleBack}
               className={`w-full mt-3 py-2 text-sm ${darkMode
                   ? "text-gray-400 hover:text-white"
                   : "text-gray-500 hover:text-gray-800"
