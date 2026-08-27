@@ -29,6 +29,9 @@ const Layout = () => {
 
   const [transferAccountNumber, setTransferAccountNumber] =
     useState("");
+
+  const [accountDetails, setAccountDetails] = useState(null);
+
   const [isOrderConfirmationOpen, setIsOrderConfirmationOpen] = useState(false);
   const {
     isCartOpen,
@@ -76,20 +79,28 @@ const Layout = () => {
           setIsInternalTransferOpen(true);
         }}
       />
-      <InternalTransferConfirmation
-        isOpen={isInternalTransferConfirmationOpen}
-        onClose={() => setIsInternalTransferConfirmationOpen(false)}
-        accountNumber={transferAccountNumber}
-        accountDetails={accountDetails}
-        cartItems={cartItems}
-        totalPrice={totalPrice}
-      />
-      <InternalTransfer
-        isOpen={isInternalTransferOpen}
-        onClose={() => setIsInternalTransferOpen(false)}
-        accountNumber={transferAccountNumber}
-        totalPrice={totalPrice}
-      />
+     <InternalTransferConfirmation
+  isOpen={isInternalTransferConfirmationOpen}
+  onClose={() => setIsInternalTransferConfirmationOpen(false)}
+  accountNumber={transferAccountNumber}
+  accountDetails={accountDetails}
+  cartItems={cartItems}
+  totalPrice={totalPrice}
+/>
+     <InternalTransfer
+  isOpen={isInternalTransferOpen}
+  onClose={() => setIsInternalTransferOpen(false)}
+  accountNumber={transferAccountNumber}
+  totalPrice={totalPrice}
+  onTransferVerified={(transferData) => {
+    console.log("Transfer verified:", transferData);
+
+    setAccountDetails(transferData);
+
+    setIsInternalTransferOpen(false);
+    setIsInternalTransferConfirmationOpen(true);
+  }}
+/>
       <OrderConfirmation
         isOpen={isOrderConfirmationOpen}
         onClose={() => setIsOrderConfirmationOpen(false)}
