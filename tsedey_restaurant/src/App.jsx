@@ -14,10 +14,18 @@ import { useCart, CartProvider } from "./context/CartContext";
 import { ThemeProvider } from "./context/ThemeContext";
 
 const Layout = () => {
+
+
+
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+
   const [isInternalTransferOpen, setIsInternalTransferOpen] =
     useState(false);
-  const [isInternalTransferConfirmationOpen, setIsInternalTransferConfirmationOpen] = useState(false);
+
+  const [
+    isInternalTransferConfirmationOpen,
+    setIsInternalTransferConfirmationOpen,
+  ] = useState(false);
 
   const [transferAccountNumber, setTransferAccountNumber] =
     useState("");
