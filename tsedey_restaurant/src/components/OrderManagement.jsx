@@ -76,7 +76,7 @@ const OrderManagement = () => {
         try {
             setServing(true);
 
-            const response = await api.put(`/Order/${orderId}/serve`);
+            const response = await api.put(`/${orderId}/serve`);
 
             if (response.data.success) {
                 // Remove the served order from the pending list
@@ -389,9 +389,23 @@ const OrderManagement = () => {
 
                                 {/* SERVED BUTTON */}
                                 <button
-                                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold transition active:scale-95"
+                                    onClick={() => {
+                                        setSelectedOrder(order);
+
+                                        if (order.paymentMethod === "Cash") {
+                                            setShowCashModal(true);
+                                        } else if (order.paymentMethod === "InternalTransfer") {
+                                            setShowTransferModal(true);
+                                        }
+                                    }}
+                                    className={`w-full py-3 rounded-xl font-semibold transition active:scale-95 ${order.paymentMethod === "Cash"
+                                        ? "bg-orange-500 hover:bg-orange-600 text-white"
+                                        : "bg-green-500 hover:bg-green-600 text-white"
+                                        }`}
                                 >
-                                    SERVED
+                                    {order.paymentMethod === "Cash"
+                                        ? "💵 COLLECT CASH"
+                                        : "✓ SERVE ORDER"}
                                 </button>
 
                             </div>
@@ -401,6 +415,181 @@ const OrderManagement = () => {
                 )}
 
             </div>
+
+            {showCashModal && selectedOrder && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+
+                    <div
+                        className={`w-full max-w-md rounded-2xl p-6 shadow-2xl ${darkMode
+                            ? "bg-gray-900 text-white"
+                            : "bg-white text-gray-900"
+                            }`}
+                    >
+
+                        <div className="text-center">
+
+                            <div className="mx-auto mb-4 w-14 h-14 rounded-full bg-orange-500/10 flex items-center justify-center text-3xl">
+                                💵
+                            </div>
+
+                            <h2 className="text-xl font-bold mb-2">
+                                Cash Payment
+                            </h2>
+
+                            <p
+                                className={
+                                    darkMode
+                                        ? "text-gray-400"
+                                        : "text-gray-600"
+                                }
+                            >
+                                Please collect the cash from the customer
+                                before serving this order.
+                            </p>
+
+                            <div
+                                className={`mt-5 rounded-xl p-4 ${darkMode
+                                    ? "bg-gray-800"
+                                    : "bg-gray-100"
+                                    }`}
+                            >
+                                <p className="text-sm">
+                                    Order
+                                </p>
+
+                                <p className="font-bold">
+                                    {selectedOrder.orderNumber}
+                                </p>
+
+                                <p className="text-sm mt-3">
+                                    Amount to collect
+                                </p>
+
+                                <p className="text-2xl font-bold text-orange-500">
+                                    {selectedOrder.totalAmount.toFixed(2)}
+                                </p>
+                            </div>
+
+                            <div className="flex gap-3 mt-6">
+
+                                <button
+                                    onClick={() => {
+                                        setShowCashModal(false);
+                                        setSelectedOrder(null);
+                                    }}
+                                    className={`flex-1 py-3 rounded-xl font-semibold ${darkMode
+                                        ? "bg-gray-800 hover:bg-gray-700 text-white"
+                                        : "bg-gray-200 hover:bg-gray-300 text-gray-800"
+                                        }`}
+                                >
+                                    CANCEL
+                                </button>
+
+                                <button
+                                    disabled={serving}
+                                    onClick={() =>
+                                        serveOrder(selectedOrder.id)
+                                    }
+                                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold disabled:opacity-50"
+                                >
+                                    {serving
+                                        ? "PROCESSING..."
+                                        : "CASH COLLECTED"}
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            )}{showTransferModal && selectedOrder && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+
+                    <div
+                        className={`w-full max-w-md rounded-2xl p-6 shadow-2xl ${darkMode
+                                ? "bg-gray-900 text-white"
+                                : "bg-white text-gray-900"
+                            }`}
+                    >
+
+                        <div className="text-center">
+
+                            <div className="mx-auto mb-4 w-14 h-14 rounded-full bg-green-500/10 flex items-center justify-center text-3xl">
+                                ✓
+                            </div>
+
+                            <h2 className="text-xl font-bold mb-2">
+                                Payment Confirmed
+                            </h2>
+
+                            <p
+                                className={
+                                    darkMode
+                                        ? "text-gray-400"
+                                        : "text-gray-600"
+                                }
+                            >
+                                Internal transfer payment has been completed.
+                            </p>
+
+                            <div
+                                className={`mt-5 rounded-xl p-4 ${darkMode
+                                        ? "bg-gray-800"
+                                        : "bg-gray-100"
+                                    }`}
+                            >
+                                <p className="text-sm">
+                                    Order
+                                </p>
+
+                                <p className="font-bold">
+                                    {selectedOrder.orderNumber}
+                                </p>
+
+                                <p className="text-sm mt-3">
+                                    Total Amount
+                                </p>
+
+                                <p className="text-2xl font-bold text-green-500">
+                                    {selectedOrder.totalAmount.toFixed(2)}
+                                </p>
+                            </div>
+
+                            <div className="flex gap-3 mt-6">
+
+                                <button
+                                    onClick={() => {
+                                        setShowTransferModal(false);
+                                        setSelectedOrder(null);
+                                    }}
+                                    className={`flex-1 py-3 rounded-xl font-semibold ${darkMode
+                                            ? "bg-gray-800 hover:bg-gray-700"
+                                            : "bg-gray-200 hover:bg-gray-300"
+                                        }`}
+                                >
+                                    CANCEL
+                                </button>
+
+                                <button
+                                    disabled={serving}
+                                    onClick={() =>
+                                        serveOrder(selectedOrder.id)
+                                    }
+                                    className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-semibold disabled:opacity-50"
+                                >
+                                    {serving
+                                        ? "PROCESSING..."
+                                        : "SERVE ORDER"}
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </section>
     );
 };
