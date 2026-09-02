@@ -10,6 +10,10 @@ const OrderManagement = () => {
     const [error, setError] = useState("");
     const [newOrderAlert, setNewOrderAlert] = useState(false);
 
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [showCashModal, setShowCashModal] = useState(false);
+    const [showTransferModal, setShowTransferModal] = useState(false);
+    const [serving, setServing] = useState(false);
     const fetchPendingOrders = async () => {
         try {
             setLoading(true);
@@ -68,6 +72,35 @@ const OrderManagement = () => {
             console.error("Error checking for new orders:", error);
         }
     };
+    const serveOrder = async (orderId) => {
+        try {
+            setServing(true);
+
+            const response = await api.put(`/Order/${orderId}/serve`);
+
+            if (response.data.success) {
+                // Remove the served order from the pending list
+                setOrders((prevOrders) =>
+                    prevOrders.filter((order) => order.id !== orderId)
+                );
+
+                ordersRef.current = ordersRef.current.filter(
+                    (order) => order.id !== orderId
+                );
+
+                // Close modals
+                setShowCashModal(false);
+                setShowTransferModal(false);
+                setSelectedOrder(null);
+            }
+
+        } catch (error) {
+            console.error("Error serving order:", error);
+        } finally {
+            setServing(false);
+        }
+    };
+
     useEffect(() => {
         // Initial load
         fetchPendingOrders();
@@ -125,8 +158,8 @@ const OrderManagement = () => {
             {newOrderAlert && (
                 <div
                     className={`fixed top-6 right-6 z-50 w-80 rounded-2xl border shadow-2xl p-4 transition-all duration-300 ${darkMode
-                            ? "bg-gray-900 border-orange-500 text-white"
-                            : "bg-white border-orange-400 text-gray-900"
+                        ? "bg-gray-900 border-orange-500 text-white"
+                        : "bg-white border-orange-400 text-gray-900"
                         }`}
                 >
                     <div className="flex items-start gap-3">
@@ -142,8 +175,8 @@ const OrderManagement = () => {
 
                             <p
                                 className={`text-sm mt-1 ${darkMode
-                                        ? "text-gray-400"
-                                        : "text-gray-600"
+                                    ? "text-gray-400"
+                                    : "text-gray-600"
                                     }`}
                             >
                                 A new customer order is waiting to be served.
@@ -153,8 +186,8 @@ const OrderManagement = () => {
                         <button
                             onClick={() => setNewOrderAlert(false)}
                             className={`text-lg leading-none ${darkMode
-                                    ? "text-gray-400 hover:text-white"
-                                    : "text-gray-400 hover:text-gray-700"
+                                ? "text-gray-400 hover:text-white"
+                                : "text-gray-400 hover:text-gray-700"
                                 }`}
                         >
                             ×
