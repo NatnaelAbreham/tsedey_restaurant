@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import api from "../api/api";
 import { useTheme } from "../context/ThemeContext";
+
 
 const OrderManagement = () => {
     const { darkMode } = useTheme();
@@ -14,6 +15,8 @@ const OrderManagement = () => {
     const [showCashModal, setShowCashModal] = useState(false);
     const [showTransferModal, setShowTransferModal] = useState(false);
     const [serving, setServing] = useState(false);
+
+    const ordersRef = useRef([]);
     const fetchPendingOrders = async () => {
         try {
             setLoading(true);
@@ -22,7 +25,10 @@ const OrderManagement = () => {
             const response = await api.get("/pending");
 
             if (response.data.success) {
-                setOrders(response.data.data);
+                const latestOrders = response.data.data;
+
+                setOrders(latestOrders);
+                ordersRef.current = latestOrders;
             }
         } catch (error) {
             console.error("Error fetching pending orders:", error);
@@ -79,16 +85,18 @@ const OrderManagement = () => {
             const response = await api.put(`/${orderId}/serve`);
 
             if (response.data.success) {
-                // Remove the served order from the pending list
+
+                // Remove served order from screen
                 setOrders((prevOrders) =>
                     prevOrders.filter((order) => order.id !== orderId)
                 );
 
+                // Keep the reference synchronized
                 ordersRef.current = ordersRef.current.filter(
                     (order) => order.id !== orderId
                 );
 
-                // Close modals
+                // Close modal
                 setShowCashModal(false);
                 setShowTransferModal(false);
                 setSelectedOrder(null);
@@ -508,8 +516,8 @@ const OrderManagement = () => {
 
                     <div
                         className={`w-full max-w-md rounded-2xl p-6 shadow-2xl ${darkMode
-                                ? "bg-gray-900 text-white"
-                                : "bg-white text-gray-900"
+                            ? "bg-gray-900 text-white"
+                            : "bg-white text-gray-900"
                             }`}
                     >
 
@@ -535,8 +543,8 @@ const OrderManagement = () => {
 
                             <div
                                 className={`mt-5 rounded-xl p-4 ${darkMode
-                                        ? "bg-gray-800"
-                                        : "bg-gray-100"
+                                    ? "bg-gray-800"
+                                    : "bg-gray-100"
                                     }`}
                             >
                                 <p className="text-sm">
@@ -564,8 +572,8 @@ const OrderManagement = () => {
                                         setSelectedOrder(null);
                                     }}
                                     className={`flex-1 py-3 rounded-xl font-semibold ${darkMode
-                                            ? "bg-gray-800 hover:bg-gray-700"
-                                            : "bg-gray-200 hover:bg-gray-300"
+                                        ? "bg-gray-800 hover:bg-gray-700"
+                                        : "bg-gray-200 hover:bg-gray-300"
                                         }`}
                                 >
                                     CANCEL
