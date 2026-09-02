@@ -17,6 +17,12 @@ const OrderManagement = () => {
     const [serving, setServing] = useState(false);
 
     const ordersRef = useRef([]);
+
+    const [toast, setToast] = useState({
+        show: false,
+        message: "",
+        type: "success",
+    });
     const fetchPendingOrders = async () => {
         try {
             setLoading(true);
@@ -85,25 +91,48 @@ const OrderManagement = () => {
             const response = await api.put(`/${orderId}/serve`);
 
             if (response.data.success) {
-
-                // Remove served order from screen
                 setOrders((prevOrders) =>
                     prevOrders.filter((order) => order.id !== orderId)
                 );
 
-                // Keep the reference synchronized
                 ordersRef.current = ordersRef.current.filter(
                     (order) => order.id !== orderId
                 );
 
-                // Close modal
                 setShowCashModal(false);
                 setShowTransferModal(false);
                 setSelectedOrder(null);
-            }
 
+                // Show success toast
+                setToast({
+                    show: true,
+                    message: "Order served successfully",
+                    type: "success",
+                });
+
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    setToast((prev) => ({
+                        ...prev,
+                        show: false,
+                    }));
+                }, 3000);
+            }
         } catch (error) {
             console.error("Error serving order:", error);
+
+            setToast({
+                show: true,
+                message: "Failed to serve order",
+                type: "error",
+            });
+
+            setTimeout(() => {
+                setToast((prev) => ({
+                    ...prev,
+                    show: false,
+                }));
+            }, 3000);
         } finally {
             setServing(false);
         }
@@ -419,6 +448,62 @@ const OrderManagement = () => {
                             </div>
                         ))}
 
+                    </div>
+                )}
+
+
+
+                {toast.show && (
+                    <div
+                        className={`fixed top-6 right-6 z-[100] flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl border transition-all duration-300 ${toast.type === "success"
+                                ? darkMode
+                                    ? "bg-gray-900 border-green-500 text-white"
+                                    : "bg-white border-green-500 text-gray-900"
+                                : darkMode
+                                    ? "bg-gray-900 border-red-500 text-white"
+                                    : "bg-white border-red-500 text-gray-900"
+                            }`}
+                    >
+                        <div
+                            className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold ${toast.type === "success"
+                                    ? "bg-green-500"
+                                    : "bg-red-500"
+                                }`}
+                        >
+                            {toast.type === "success" ? "✓" : "!"}
+                        </div>
+
+                        <div>
+                            <p className="font-semibold">
+                                {toast.message}
+                            </p>
+
+                            <p
+                                className={`text-xs mt-1 ${darkMode
+                                        ? "text-gray-400"
+                                        : "text-gray-500"
+                                    }`}
+                            >
+                                {toast.type === "success"
+                                    ? "The order has been removed from pending orders."
+                                    : "Please try again."}
+                            </p>
+                        </div>
+
+                        <button
+                            onClick={() =>
+                                setToast((prev) => ({
+                                    ...prev,
+                                    show: false,
+                                }))
+                            }
+                            className={`ml-2 text-lg ${darkMode
+                                    ? "text-gray-400 hover:text-white"
+                                    : "text-gray-400 hover:text-gray-700"
+                                }`}
+                        >
+                            ×
+                        </button>
                     </div>
                 )}
 
