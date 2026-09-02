@@ -61,6 +61,10 @@ const Navbar = () => {
             Add Quantity
           </Link>
 
+          <Link to="/ordermanagement" className={linkClass("/ordermanagement")}>
+            Order Management
+          </Link>
+
           <Link to="/contact" className={linkClass("/contact")}>
             Contact
           </Link>

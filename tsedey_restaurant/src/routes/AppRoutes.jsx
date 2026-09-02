@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Home from "../pages/Home";
 import Menu from "../components/Menu";
- import OrderManagement from "../components/OrderManagement"; 
+import OrderManagement from "../components/OrderManagement"; 
 import ContactPage from "../pages/ContactPage";
 import AddMenu from '../menu/AddMenu.jsx';
 import InventoryPage from '../menu/InventoryPage.jsx';
@@ -14,7 +14,7 @@ const AppRoutes = () => {
       <Route path="/menu" element={<Menu />} />
       <Route path="/addmenu" element={<AddMenu />} />
       <Route path="/addquantity" element={<InventoryPage />} />
-      <Route path="/OrderManagement" element={<OrderManagement />} />
+      <Route path="/ordermanagement" element={<OrderManagement />} />
       <Route path="/contact" element={<ContactPage />} />
       
     </Routes>
