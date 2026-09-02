@@ -7,7 +7,7 @@ import CartSidebar from "./components/CartSidebar";
 import OrderSuccess from "./components/OrderSuccess";
 import PaymentMethod from "./components/PaymentMethod";
 import InternalTransfer from "./components/InternalTransfer";
-import InternalTransferConfirmation from "./components/InternalTransferConfirmation";
+//import InternalTransferConfirmation from "./components/InternalTransferConfirmation";
 import OrderConfirmation from "./components/OrderConfirmation";
 import Footer from "./components/Footer";
 import { useCart, CartProvider } from "./context/CartContext";
@@ -22,11 +22,11 @@ const Layout = () => {
   const [isInternalTransferOpen, setIsInternalTransferOpen] =
     useState(false);
 
-  const [
+  /* const [
     isInternalTransferConfirmationOpen,
     setIsInternalTransferConfirmationOpen,
   ] = useState(false);
-
+ */
   const [transferAccountNumber, setTransferAccountNumber] =
     useState("");
 
@@ -79,28 +79,29 @@ const Layout = () => {
           setIsInternalTransferOpen(true);
         }}
       />
-     <InternalTransferConfirmation
-  isOpen={isInternalTransferConfirmationOpen}
-  onClose={() => setIsInternalTransferConfirmationOpen(false)}
-  accountNumber={transferAccountNumber}
-  accountDetails={accountDetails}
-  cartItems={cartItems}
-  totalPrice={totalPrice}
-/>
-     <InternalTransfer
-  isOpen={isInternalTransferOpen}
-  onClose={() => setIsInternalTransferOpen(false)}
-  accountNumber={transferAccountNumber}
-  totalPrice={totalPrice}
-  onTransferVerified={(transferData) => {
-    console.log("Transfer verified:", transferData);
-
-    setAccountDetails(transferData);
-
-    setIsInternalTransferOpen(false);
-    setIsInternalTransferConfirmationOpen(true);
-  }}
-/>
+      {/* <InternalTransferConfirmation
+        isOpen={isInternalTransferConfirmationOpen}
+        onClose={() => setIsInternalTransferConfirmationOpen(false)}
+        accountNumber={transferAccountNumber}
+        accountDetails={accountDetails}
+        cartItems={cartItems}
+        totalPrice={totalPrice}
+        onOrderCreated={(order) => {
+          setOrderResult(order);
+          setShowSuccess(true);
+        }}
+      /> */}
+      <InternalTransfer
+        isOpen={isInternalTransferOpen}
+        onClose={() => setIsInternalTransferOpen(false)}
+        accountNumber={transferAccountNumber}
+        totalPrice={totalPrice}
+        cartItems={cartItems}
+        onOrderCreated={(order) => {
+          setOrderResult(order);
+          setShowSuccess(true);
+        }}
+      />
       <OrderConfirmation
         isOpen={isOrderConfirmationOpen}
         onClose={() => setIsOrderConfirmationOpen(false)}

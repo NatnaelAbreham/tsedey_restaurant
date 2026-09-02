@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import api from "../api/api";
+import { useCart } from "../context/CartContext";
 
 const InternalTransfer = ({
   isOpen,
   onClose,
   accountNumber,
   totalPrice,
-  onTransferVerified,
+  cartItems,
+  onOrderCreated,
 }) => {
   const { darkMode } = useTheme();
-
+const { clearCart } = useCart();
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -103,6 +105,7 @@ const InternalTransfer = ({
 
           const otpResponse = await api.post("/sendotp", {
             phoneNumber: mobile,
+            AccountNumber: accountNumber,
           });
 
           if (!otpResponse.data.success) {
@@ -142,65 +145,107 @@ const InternalTransfer = ({
   };
 
   const handleOtpSubmit = async () => {
-    if (otp.length !== 6) {
-      setOtpError("Please enter the 6-digit verification code");
-      return;
-    }
+  if (otp.length !== 6) {
+    setOtpError("Please enter the 6-digit verification code");
+    return;
+  }
 
-    try {
-      setOtpError("");
+  try {
+    setOtpError("");
 
-      const otpResponse = await api.post("/verifyotp", {
+    // ==========================================
+    // STEP 1: VERIFY OTP
+    // ==========================================
+
+    const otpResponse = await api.post("/verifyotp", {
+      phoneNumber: mobileNumber,
+      otp: otp,
+    });
+
+    // ==========================================
+    // STEP 2: CREATE ORDER
+    // OTP WAS SUCCESSFULLY VERIFIED
+    // ==========================================
+
+    if (otpResponse.data.success) {
+      const orderResponse = await api.post("/createorder", {
         phoneNumber: mobileNumber,
-        otp: otp,
+        accountNumber: accountNumber,
+        paymentMethod: "InternalTransfer",
+        totalAmount: totalPrice,
+
+        items: cartItems.map((item) => ({
+          itemId: item.id,
+          quantity: item.quantity,
+        })),
       });
 
-      // OTP is correct
-      if (otpResponse.data.success) {
-        onTransferVerified({
-          accountNumber,
-          phoneNumber: mobileNumber,
-        });
+      // ==========================================
+      // STEP 3: ORDER CREATED
+      // ==========================================
+
+      if (orderResponse.data.success) {
+        const order = orderResponse.data.data;
+
+        console.log("Internal Transfer Order created:", order);
+
+        // Clear cart only after backend confirms order
+        clearCart();
+
+        // Close Internal Transfer modal
+        onClose();
+
+        // Show existing OrderSuccess
+        onOrderCreated(order);
 
         return;
       }
 
-    } catch (error) {
-      console.error("OTP verification failed:", error);
+      // Order API returned an unsuccessful response
+      setOtpError(
+        orderResponse.data.message || "Failed to create order"
+      );
+    }
+  } catch (error) {
+    console.error("Internal Transfer failed:", error);
 
-      const response = error.response?.data;
+    const response = error.response?.data;
 
-      // Backend returned 400 because OTP is wrong
-      if (response) {
-        const attemptsRemaining = response.attemptsRemaining;
+    // ==========================================
+    // OTP ERROR
+    // ==========================================
 
-        if (
-          attemptsRemaining !== undefined &&
-          attemptsRemaining > 0
-        ) {
-          setOtpError(
-            `${response.message || "Invalid OTP"} — Attempts remaining: ${attemptsRemaining}`
-          );
+    if (response?.attemptsRemaining !== undefined) {
+      const attemptsRemaining = response.attemptsRemaining;
 
-          // Clear the old OTP so user can enter another
-          setOtp("");
-
-          return;
-        }
-
-        // Attempts reached zero
+      if (attemptsRemaining > 0) {
         setOtpError(
-          response.message || "OTP verification failed"
+          `${response.message || "Invalid OTP"} — Attempts remaining: ${attemptsRemaining}`
         );
 
         setOtp("");
         return;
       }
 
-      // Other unexpected error
-      setOtpError("Unable to verify OTP. Please try again.");
+      // Attempts reached zero
+      setOtpError(
+        response.message || "OTP verification failed"
+      );
+
+      setOtp("");
+      return;
     }
-  };
+
+    // ==========================================
+    // OTHER ERROR
+    // ==========================================
+
+    setOtpError(
+      response?.message ||
+      "Unable to complete the transfer. Please try again."
+    );
+  }
+};
 
   if (!isOpen) return null;
 
