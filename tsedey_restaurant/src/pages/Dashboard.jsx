@@ -32,6 +32,7 @@ const Dashboard = () => {
     const [ordersTrend, setOrdersTrend] = useState([]);
     const [paymentMethods, setPaymentMethods] = useState([]);
     const [topSellingItems, setTopSellingItems] = useState([]);
+    const [foodVsDrinks, setFoodVsDrinks] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchDashboardSummary = async () => {
@@ -44,12 +45,14 @@ const Dashboard = () => {
                 ordersResponse,
                 paymentResponse,
                 topItemsResponse,
+                foodDrinksResponse,
             ] = await Promise.all([
                 api.get("/dashboard-summary"),
                 api.get("/revenue-trend"),
                 api.get("/orders-trend"),
                 api.get("/payment-methods"),
                 api.get("/top-selling-items"),
+                api.get("/food-vs-drinks"),
             ]);
 
             if (summaryResponse.data.success) {
@@ -70,6 +73,9 @@ const Dashboard = () => {
 
             if (topItemsResponse.data.success) {
                 setTopSellingItems(topItemsResponse.data.data);
+            }
+            if (foodDrinksResponse.data.success) {
+                setFoodVsDrinks(foodDrinksResponse.data.data);
             }
         } catch (error) {
             console.error("Failed to load dashboard data:", error);
@@ -415,11 +421,8 @@ const Dashboard = () => {
 
             </div>
 
-
-
-
             {/* Payment Methods */}
-            <div className="mt-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
                 <div
                     className={`rounded-2xl border p-6 shadow-sm ${darkMode
                         ? "bg-gray-900 border-gray-800"
@@ -542,15 +545,138 @@ const Dashboard = () => {
 
                     </div>
                 </div>
-            </div>
 
+                {/* Food vs Drinks */}
+                <div
+                    className={`rounded-2xl border p-6 shadow-sm ${darkMode
+                        ? "bg-gray-900 border-gray-800"
+                        : "bg-white/90 border-gray-100"
+                        }`}
+                >
+                    <div className="mb-6">
+                        <h2 className="text-lg font-bold">
+                            Food vs Drinks
+                        </h2>
+
+                        <p
+                            className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Sales comparison over the last 7 days
+                        </p>
+                    </div>
+
+                    <div className="h-[320px]">
+                        {foodVsDrinks.length === 0 ? (
+                            <div
+                                className={`h-full flex items-center justify-center ${darkMode ? "text-gray-500" : "text-gray-400"
+                                    }`}
+                            >
+                                No sales data available
+                            </div>
+                        ) : (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart
+                                    data={foodVsDrinks}
+                                    margin={{
+                                        top: 20,
+                                        right: 20,
+                                        left: 0,
+                                        bottom: 5,
+                                    }}
+                                >
+                                    <CartesianGrid
+                                        strokeDasharray="3 3"
+                                        vertical={false}
+                                        stroke={darkMode ? "#374151" : "#e5e7eb"}
+                                    />
+
+                                    <XAxis
+                                        dataKey="category"
+                                        tick={{
+                                            fill: darkMode ? "#d1d5db" : "#374151",
+                                            fontSize: 12,
+                                        }}
+                                        axisLine={false}
+                                        tickLine={false}
+                                    />
+
+                                    <YAxis
+                                        allowDecimals={false}
+                                        tick={{
+                                            fill: darkMode ? "#9ca3af" : "#6b7280",
+                                            fontSize: 12,
+                                        }}
+                                        axisLine={false}
+                                        tickLine={false}
+                                    />
+
+                                    <Tooltip
+                                        formatter={(value) => [
+                                            value,
+                                            "Items Sold",
+                                        ]}
+                                        contentStyle={{
+                                            backgroundColor: darkMode ? "#111827" : "#ffffff",
+                                            border: darkMode
+                                                ? "1px solid #374151"
+                                                : "1px solid #e5e7eb",
+                                            borderRadius: "12px",
+                                        }}
+                                    />
+
+                                    <Bar
+                                        dataKey="quantitySold"
+                                        fill="#f97316"
+                                        radius={[8, 8, 0, 0]}
+                                        barSize={60}
+                                    >
+                                        <LabelList
+                                            dataKey="quantitySold"
+                                            position="top"
+                                            fill={darkMode ? "#d1d5db" : "#374151"}
+                                            fontSize={12}
+                                        />
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        )}
+                    </div>
+
+                    {/* Revenue summary */}
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                        {foodVsDrinks.map((item) => (
+                            <div
+                                key={item.category}
+                                className={`rounded-xl p-4 ${darkMode
+                                    ? "bg-gray-800"
+                                    : "bg-gray-50"
+                                    }`}
+                            >
+                                <p
+                                    className={`text-sm ${darkMode
+                                        ? "text-gray-400"
+                                        : "text-gray-500"
+                                        }`}
+                                >
+                                    {item.category}
+                                </p>
+
+                                <p className="text-lg font-bold mt-1">
+                                    {Number(item.revenue || 0).toLocaleString()} ETB
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
 
             {/* Top Selling Items */}
             <div className="mt-6">
                 <div
                     className={`rounded-2xl border p-6 shadow-sm ${darkMode
-                            ? "bg-gray-900 border-gray-800"
-                            : "bg-white/90 border-gray-100"
+                        ? "bg-gray-900 border-gray-800"
+                        : "bg-white/90 border-gray-100"
                         }`}
                 >
                     <div className="mb-6">
@@ -648,6 +774,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+
         </div>
     );
 };
