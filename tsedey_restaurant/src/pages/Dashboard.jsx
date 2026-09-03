@@ -42,6 +42,13 @@ const Dashboard = () => {
         },
         alerts: [],
     });
+    const [transferAnalytics, setTransferAnalytics] = useState({
+        successful: 0,
+        failed: 0,
+        unverified: 0,
+        totalTransfers: 0,
+        successfulAmount: 0,
+    });
     const [loading, setLoading] = useState(true);
 
     const fetchDashboardSummary = async () => {
@@ -56,6 +63,7 @@ const Dashboard = () => {
                 topItemsResponse,
                 foodDrinksResponse,
                 inventoryResponse,
+                transferResponse,
             ] = await Promise.all([
                 api.get("/dashboard-summary"),
                 api.get("/revenue-trend"),
@@ -64,6 +72,7 @@ const Dashboard = () => {
                 api.get("/top-selling-items"),
                 api.get("/food-vs-drinks"),
                 api.get("/inventory-status"),
+                api.get("/internal-transfer-analytics"),
             ]);
 
             if (summaryResponse.data.success) {
@@ -90,6 +99,8 @@ const Dashboard = () => {
             }
             if (inventoryResponse.data.success) {
                 setInventoryStatus(inventoryResponse.data.data);
+            } if (transferResponse.data.success) {
+                setTransferAnalytics(transferResponse.data.data);
             }
         } catch (error) {
             console.error("Failed to load dashboard data:", error);
@@ -792,8 +803,8 @@ const Dashboard = () => {
             {/* Inventory Status */}
             <div
                 className={`rounded-2xl border p-6 shadow-sm ${darkMode
-                        ? "bg-gray-900 border-gray-800"
-                        : "bg-white/90 border-gray-100"
+                    ? "bg-gray-900 border-gray-800"
+                    : "bg-white/90 border-gray-100"
                     }`}
             >
                 <div className="mb-6">
@@ -889,8 +900,8 @@ const Dashboard = () => {
                     {inventoryStatus.alerts.length === 0 ? (
                         <div
                             className={`rounded-xl p-4 text-sm ${darkMode
-                                    ? "bg-green-950/30 text-green-400"
-                                    : "bg-green-50 text-green-600"
+                                ? "bg-green-950/30 text-green-400"
+                                : "bg-green-50 text-green-600"
                                 }`}
                         >
                             ✓ All limited items have sufficient stock.
@@ -901,8 +912,8 @@ const Dashboard = () => {
                                 <div
                                     key={item.itemId}
                                     className={`flex items-center justify-between rounded-xl p-3 ${darkMode
-                                            ? "bg-gray-800"
-                                            : "bg-gray-50"
+                                        ? "bg-gray-800"
+                                        : "bg-gray-50"
                                         }`}
                                 >
                                     <div>
@@ -912,8 +923,8 @@ const Dashboard = () => {
 
                                         <p
                                             className={`text-xs mt-1 ${darkMode
-                                                    ? "text-gray-400"
-                                                    : "text-gray-500"
+                                                ? "text-gray-400"
+                                                : "text-gray-500"
                                                 }`}
                                         >
                                             {item.status === "OutOfStock"
@@ -924,8 +935,8 @@ const Dashboard = () => {
 
                                     <span
                                         className={`px-3 py-1 rounded-full text-xs font-semibold ${item.status === "OutOfStock"
-                                                ? "bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400"
-                                                : "bg-orange-100 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400"
+                                            ? "bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400"
+                                            : "bg-orange-100 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400"
                                             }`}
                                     >
                                         {item.status === "OutOfStock"
@@ -936,6 +947,118 @@ const Dashboard = () => {
                             ))}
                         </div>
                     )}
+                </div>
+            </div>
+
+            {/* Internal Transfer Analytics */}
+            <div
+                className={`rounded-2xl border p-6 shadow-sm ${darkMode
+                        ? "bg-gray-900 border-gray-800"
+                        : "bg-white/90 border-gray-100"
+                    }`}
+            >
+                <div className="mb-6">
+                    <h2 className="text-lg font-bold">
+                        Internal Transfer Analytics
+                    </h2>
+
+                    <p
+                        className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"
+                            }`}
+                    >
+                        Transfer activity over the last 7 days
+                    </p>
+                </div>
+
+                {/* Main Statistics */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {/* Successful */}
+                    <div
+                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-green-50"
+                            }`}
+                    >
+                        <p
+                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Successful
+                        </p>
+
+                        <p className="text-2xl font-bold text-green-500 mt-1">
+                            {transferAnalytics.successful}
+                        </p>
+                    </div>
+
+                    {/* Failed */}
+                    <div
+                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-red-50"
+                            }`}
+                    >
+                        <p
+                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Failed
+                        </p>
+
+                        <p className="text-2xl font-bold text-red-500 mt-1">
+                            {transferAnalytics.failed}
+                        </p>
+                    </div>
+
+                    {/* Unverified */}
+                    <div
+                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-orange-50"
+                            }`}
+                    >
+                        <p
+                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Unverified
+                        </p>
+
+                        <p className="text-2xl font-bold text-orange-500 mt-1">
+                            {transferAnalytics.unverified}
+                        </p>
+                    </div>
+
+                    {/* Total */}
+                    <div
+                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-blue-50"
+                            }`}
+                    >
+                        <p
+                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Total Transfers
+                        </p>
+
+                        <p className="text-2xl font-bold text-blue-500 mt-1">
+                            {transferAnalytics.totalTransfers}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Successful Amount */}
+                <div
+                    className={`mt-4 rounded-xl p-5 ${darkMode ? "bg-gray-800" : "bg-gray-50"
+                        }`}
+                >
+                    <p
+                        className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                            }`}
+                    >
+                        Successful Transfer Amount
+                    </p>
+
+                    <p className="text-2xl font-bold mt-1">
+                        {Number(
+                            transferAnalytics.successfulAmount || 0
+                        ).toLocaleString()}{" "}
+                        ETB
+                    </p>
                 </div>
             </div>
 
