@@ -50,6 +50,7 @@ const Dashboard = () => {
         successfulAmount: 0,
     });
     const [recentOrders, setRecentOrders] = useState([]);
+    const [lastUpdated, setLastUpdated] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const fetchDashboardSummary = async () => {
@@ -195,7 +196,14 @@ const Dashboard = () => {
                     {loading ? "Refreshing..." : "↻ Refresh"}
                 </button>
             </div>
-
+            {lastUpdated && (
+                <p
+                    className={`text-xs mb-4 ${darkMode ? "text-gray-500" : "text-gray-400"
+                        }`}
+                >
+                    Last updated {lastUpdated.toLocaleTimeString()}
+                </p>
+            )}
             {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                 {cards.map((card) => (
