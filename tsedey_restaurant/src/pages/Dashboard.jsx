@@ -33,6 +33,15 @@ const Dashboard = () => {
     const [paymentMethods, setPaymentMethods] = useState([]);
     const [topSellingItems, setTopSellingItems] = useState([]);
     const [foodVsDrinks, setFoodVsDrinks] = useState([]);
+    const [inventoryStatus, setInventoryStatus] = useState({
+        summary: {
+            unlimited: 0,
+            inStock: 0,
+            lowStock: 0,
+            outOfStock: 0,
+        },
+        alerts: [],
+    });
     const [loading, setLoading] = useState(true);
 
     const fetchDashboardSummary = async () => {
@@ -46,6 +55,7 @@ const Dashboard = () => {
                 paymentResponse,
                 topItemsResponse,
                 foodDrinksResponse,
+                inventoryResponse,
             ] = await Promise.all([
                 api.get("/dashboard-summary"),
                 api.get("/revenue-trend"),
@@ -53,6 +63,7 @@ const Dashboard = () => {
                 api.get("/payment-methods"),
                 api.get("/top-selling-items"),
                 api.get("/food-vs-drinks"),
+                api.get("/inventory-status"),
             ]);
 
             if (summaryResponse.data.success) {
@@ -76,6 +87,9 @@ const Dashboard = () => {
             }
             if (foodDrinksResponse.data.success) {
                 setFoodVsDrinks(foodDrinksResponse.data.data);
+            }
+            if (inventoryResponse.data.success) {
+                setInventoryStatus(inventoryResponse.data.data);
             }
         } catch (error) {
             console.error("Failed to load dashboard data:", error);
@@ -772,6 +786,156 @@ const Dashboard = () => {
                             </ResponsiveContainer>
                         )}
                     </div>
+                </div>
+            </div>
+
+            {/* Inventory Status */}
+            <div
+                className={`rounded-2xl border p-6 shadow-sm ${darkMode
+                        ? "bg-gray-900 border-gray-800"
+                        : "bg-white/90 border-gray-100"
+                    }`}
+            >
+                <div className="mb-6">
+                    <h2 className="text-lg font-bold">
+                        Inventory Status
+                    </h2>
+
+                    <p
+                        className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"
+                            }`}
+                    >
+                        Current menu inventory overview
+                    </p>
+                </div>
+
+                {/* Inventory Summary */}
+                <div className="grid grid-cols-2 gap-4">
+                    {/* In Stock */}
+                    <div
+                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-green-50"
+                            }`}
+                    >
+                        <p
+                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            In Stock
+                        </p>
+
+                        <p className="text-2xl font-bold text-green-500 mt-1">
+                            {inventoryStatus.summary.inStock}
+                        </p>
+                    </div>
+
+                    {/* Low Stock */}
+                    <div
+                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-orange-50"
+                            }`}
+                    >
+                        <p
+                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Low Stock
+                        </p>
+
+                        <p className="text-2xl font-bold text-orange-500 mt-1">
+                            {inventoryStatus.summary.lowStock}
+                        </p>
+                    </div>
+
+                    {/* Out of Stock */}
+                    <div
+                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-red-50"
+                            }`}
+                    >
+                        <p
+                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Out of Stock
+                        </p>
+
+                        <p className="text-2xl font-bold text-red-500 mt-1">
+                            {inventoryStatus.summary.outOfStock}
+                        </p>
+                    </div>
+
+                    {/* Unlimited */}
+                    <div
+                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-blue-50"
+                            }`}
+                    >
+                        <p
+                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Unlimited
+                        </p>
+
+                        <p className="text-2xl font-bold text-blue-500 mt-1">
+                            {inventoryStatus.summary.unlimited}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Alerts */}
+                <div className="mt-6">
+                    <h3 className="font-semibold mb-3">
+                        Stock Alerts
+                    </h3>
+
+                    {inventoryStatus.alerts.length === 0 ? (
+                        <div
+                            className={`rounded-xl p-4 text-sm ${darkMode
+                                    ? "bg-green-950/30 text-green-400"
+                                    : "bg-green-50 text-green-600"
+                                }`}
+                        >
+                            ✓ All limited items have sufficient stock.
+                        </div>
+                    ) : (
+                        <div className="space-y-2 max-h-[220px] overflow-y-auto">
+                            {inventoryStatus.alerts.map((item) => (
+                                <div
+                                    key={item.itemId}
+                                    className={`flex items-center justify-between rounded-xl p-3 ${darkMode
+                                            ? "bg-gray-800"
+                                            : "bg-gray-50"
+                                        }`}
+                                >
+                                    <div>
+                                        <p className="font-medium">
+                                            {item.itemName}
+                                        </p>
+
+                                        <p
+                                            className={`text-xs mt-1 ${darkMode
+                                                    ? "text-gray-400"
+                                                    : "text-gray-500"
+                                                }`}
+                                        >
+                                            {item.status === "OutOfStock"
+                                                ? "Currently unavailable"
+                                                : "Stock running low"}
+                                        </p>
+                                    </div>
+
+                                    <span
+                                        className={`px-3 py-1 rounded-full text-xs font-semibold ${item.status === "OutOfStock"
+                                                ? "bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400"
+                                                : "bg-orange-100 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400"
+                                            }`}
+                                    >
+                                        {item.status === "OutOfStock"
+                                            ? "Out of Stock"
+                                            : `${item.quantityAvailable} left`}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 
