@@ -49,6 +49,7 @@ const Dashboard = () => {
         totalTransfers: 0,
         successfulAmount: 0,
     });
+    const [recentOrders, setRecentOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchDashboardSummary = async () => {
@@ -64,6 +65,7 @@ const Dashboard = () => {
                 foodDrinksResponse,
                 inventoryResponse,
                 transferResponse,
+                recentOrdersResponse,
             ] = await Promise.all([
                 api.get("/dashboard-summary"),
                 api.get("/revenue-trend"),
@@ -73,6 +75,7 @@ const Dashboard = () => {
                 api.get("/food-vs-drinks"),
                 api.get("/inventory-status"),
                 api.get("/internal-transfer-analytics"),
+                api.get("/recent-orders"),
             ]);
 
             if (summaryResponse.data.success) {
@@ -99,8 +102,12 @@ const Dashboard = () => {
             }
             if (inventoryResponse.data.success) {
                 setInventoryStatus(inventoryResponse.data.data);
-            } if (transferResponse.data.success) {
+            }
+            if (transferResponse.data.success) {
                 setTransferAnalytics(transferResponse.data.data);
+            }
+            if (recentOrdersResponse.data.success) {
+                setRecentOrders(recentOrdersResponse.data.data);
             }
         } catch (error) {
             console.error("Failed to load dashboard data:", error);
@@ -953,8 +960,8 @@ const Dashboard = () => {
             {/* Internal Transfer Analytics */}
             <div
                 className={`rounded-2xl border p-6 shadow-sm ${darkMode
-                        ? "bg-gray-900 border-gray-800"
-                        : "bg-white/90 border-gray-100"
+                    ? "bg-gray-900 border-gray-800"
+                    : "bg-white/90 border-gray-100"
                     }`}
             >
                 <div className="mb-6">
@@ -1059,6 +1066,155 @@ const Dashboard = () => {
                         ).toLocaleString()}{" "}
                         ETB
                     </p>
+                </div>
+            </div>
+
+
+            {/* Recent Orders */}
+            <div className="mt-6">
+                <div
+                    className={`rounded-2xl border shadow-sm overflow-hidden ${darkMode
+                            ? "bg-gray-900 border-gray-800"
+                            : "bg-white/90 border-gray-100"
+                        }`}
+                >
+                    <div className="p-6">
+                        <h2 className="text-lg font-bold">
+                            Recent Orders
+                        </h2>
+
+                        <p
+                            className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Latest customer orders
+                        </p>
+                    </div>
+
+                    {recentOrders.length === 0 ? (
+                        <div
+                            className={`px-6 pb-6 text-center ${darkMode ? "text-gray-500" : "text-gray-400"
+                                }`}
+                        >
+                            No recent orders available.
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead
+                                    className={
+                                        darkMode
+                                            ? "bg-gray-800 text-gray-400"
+                                            : "bg-gray-50 text-gray-500"
+                                    }
+                                >
+                                    <tr>
+                                        <th className="text-left px-6 py-4 font-semibold">
+                                            Order
+                                        </th>
+
+                                        <th className="text-left px-6 py-4 font-semibold">
+                                            Date
+                                        </th>
+
+                                        <th className="text-left px-6 py-4 font-semibold">
+                                            Items
+                                        </th>
+
+                                        <th className="text-left px-6 py-4 font-semibold">
+                                            Payment
+                                        </th>
+
+                                        <th className="text-left px-6 py-4 font-semibold">
+                                            Amount
+                                        </th>
+
+                                        <th className="text-left px-6 py-4 font-semibold">
+                                            Status
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody
+                                    className={
+                                        darkMode
+                                            ? "divide-y divide-gray-800"
+                                            : "divide-y divide-gray-100"
+                                    }
+                                >
+                                    {recentOrders.map((order) => (
+                                        <tr
+                                            key={order.id}
+                                            className={
+                                                darkMode
+                                                    ? "hover:bg-gray-800/60 transition"
+                                                    : "hover:bg-gray-50 transition"
+                                            }
+                                        >
+                                            {/* Order Number */}
+                                            <td className="px-6 py-4 font-semibold">
+                                                #{order.orderNumber}
+                                            </td>
+
+                                            {/* Date */}
+                                            <td
+                                                className={
+                                                    darkMode
+                                                        ? "px-6 py-4 text-gray-400"
+                                                        : "px-6 py-4 text-gray-500"
+                                                }
+                                            >
+                                                {new Date(
+                                                    order.orderDate
+                                                ).toLocaleString()}
+                                            </td>
+
+                                            {/* Items */}
+                                            <td className="px-6 py-4">
+                                                <div className="space-y-1">
+                                                    {order.items?.map((item, index) => (
+                                                        <div key={index}>
+                                                            {item.itemName} × {item.quantity}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </td>
+
+                                            {/* Payment */}
+                                            <td className="px-6 py-4">
+                                                {order.paymentMethod ===
+                                                    "InternalTransfer"
+                                                    ? "Internal Transfer"
+                                                    : order.paymentMethod}
+                                            </td>
+
+                                            {/* Amount */}
+                                            <td className="px-6 py-4 font-semibold">
+                                                {Number(
+                                                    order.totalAmount || 0
+                                                ).toLocaleString()}{" "}
+                                                ETB
+                                            </td>
+
+                                            {/* Status */}
+                                            <td className="px-6 py-4">
+                                                <span
+                                                    className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${order.status === "Served"
+                                                            ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400"
+                                                            : order.status === "Pending"
+                                                                ? "bg-orange-100 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400"
+                                                                : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                                                        }`}
+                                                >
+                                                    {order.status}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
             </div>
 
