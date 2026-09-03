@@ -68,6 +68,9 @@ const Navbar = () => {
           <Link to="/contact" className={linkClass("/contact")}>
             Contact
           </Link>
+           <Link to="/dashboard" className={linkClass("/dashboard")}>
+            Dashboard
+          </Link>
         </div>
 
         {/* Actions */}
