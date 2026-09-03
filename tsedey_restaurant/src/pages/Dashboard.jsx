@@ -703,7 +703,266 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Top Selling Items */}
+
+            {/* Revenue & Orders Trends */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+                {/* Top Selling Items */}
+                <div className="mt-6">
+                    <div
+                        className={`rounded-2xl border p-6 shadow-sm ${darkMode
+                            ? "bg-gray-900 border-gray-800"
+                            : "bg-white/90 border-gray-100"
+                            }`}
+                    >
+                        <div className="mb-6">
+                            <h2 className="text-lg font-bold">
+                                Top Selling Items
+                            </h2>
+
+                            <p
+                                className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"
+                                    }`}
+                            >
+                                Best-selling menu items over the last 7 days
+                            </p>
+                        </div>
+
+                        <div className="h-[420px]">
+                            {topSellingItems.length === 0 ? (
+                                <div
+                                    className={`h-full flex items-center justify-center ${darkMode ? "text-gray-500" : "text-gray-400"
+                                        }`}
+                                >
+                                    No sales data available
+                                </div>
+                            ) : (
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart
+                                        data={topSellingItems}
+                                        layout="vertical"
+                                        margin={{
+                                            top: 5,
+                                            right: 50,
+                                            left: 20,
+                                            bottom: 5,
+                                        }}
+                                    >
+                                        <CartesianGrid
+                                            strokeDasharray="3 3"
+                                            horizontal={false}
+                                            stroke={darkMode ? "#374151" : "#e5e7eb"}
+                                        />
+
+                                        <XAxis
+                                            type="number"
+                                            allowDecimals={false}
+                                            tick={{
+                                                fill: darkMode ? "#9ca3af" : "#6b7280",
+                                                fontSize: 12,
+                                            }}
+                                            axisLine={false}
+                                            tickLine={false}
+                                        />
+
+                                        <YAxis
+                                            type="category"
+                                            dataKey="itemName"
+                                            width={110}
+                                            tick={{
+                                                fill: darkMode ? "#d1d5db" : "#374151",
+                                                fontSize: 12,
+                                            }}
+                                            axisLine={false}
+                                            tickLine={false}
+                                        />
+
+                                        <Tooltip
+                                            formatter={(value) => [
+                                                value,
+                                                "Items Sold",
+                                            ]}
+                                            contentStyle={{
+                                                backgroundColor: darkMode ? "#111827" : "#ffffff",
+                                                border: darkMode
+                                                    ? "1px solid #374151"
+                                                    : "1px solid #e5e7eb",
+                                                borderRadius: "12px",
+                                            }}
+                                        />
+
+                                        <Bar
+                                            dataKey="quantitySold"
+                                            fill="#f97316"
+                                            radius={[0, 8, 8, 0]}
+                                            barSize={24}
+                                        >
+                                            <LabelList
+                                                dataKey="quantitySold"
+                                                position="right"
+                                                fill={darkMode ? "#d1d5db" : "#374151"}
+                                                fontSize={12}
+                                            />
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Inventory Status */}
+                <div
+                    className={`rounded-2xl border p-6 shadow-sm ${darkMode
+                        ? "bg-gray-900 border-gray-800"
+                        : "bg-white/90 border-gray-100"
+                        }`}
+                >
+                    <div className="mb-6">
+                        <h2 className="text-lg font-bold">
+                            Inventory Status
+                        </h2>
+
+                        <p
+                            className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Current menu inventory overview
+                        </p>
+                    </div>
+
+                    {/* Inventory Summary */}
+                    <div className="grid grid-cols-2 gap-4">
+                        {/* In Stock */}
+                        <div
+                            className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-green-50"
+                                }`}
+                        >
+                            <p
+                                className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                    }`}
+                            >
+                                In Stock
+                            </p>
+
+                            <p className="text-2xl font-bold text-green-500 mt-1">
+                                {inventoryStatus.summary.inStock}
+                            </p>
+                        </div>
+
+                        {/* Low Stock */}
+                        <div
+                            className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-orange-50"
+                                }`}
+                        >
+                            <p
+                                className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                    }`}
+                            >
+                                Low Stock
+                            </p>
+
+                            <p className="text-2xl font-bold text-orange-500 mt-1">
+                                {inventoryStatus.summary.lowStock}
+                            </p>
+                        </div>
+
+                        {/* Out of Stock */}
+                        <div
+                            className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-red-50"
+                                }`}
+                        >
+                            <p
+                                className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                    }`}
+                            >
+                                Out of Stock
+                            </p>
+
+                            <p className="text-2xl font-bold text-red-500 mt-1">
+                                {inventoryStatus.summary.outOfStock}
+                            </p>
+                        </div>
+
+                        {/* Unlimited */}
+                        <div
+                            className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-blue-50"
+                                }`}
+                        >
+                            <p
+                                className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                    }`}
+                            >
+                                Unlimited
+                            </p>
+
+                            <p className="text-2xl font-bold text-blue-500 mt-1">
+                                {inventoryStatus.summary.unlimited}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Alerts */}
+                    <div className="mt-6">
+                        <h3 className="font-semibold mb-3">
+                            Stock Alerts
+                        </h3>
+
+                        {inventoryStatus.alerts.length === 0 ? (
+                            <div
+                                className={`rounded-xl p-4 text-sm ${darkMode
+                                    ? "bg-green-950/30 text-green-400"
+                                    : "bg-green-50 text-green-600"
+                                    }`}
+                            >
+                                ✓ All limited items have sufficient stock.
+                            </div>
+                        ) : (
+                            <div className="space-y-2 max-h-[220px] overflow-y-auto">
+                                {inventoryStatus.alerts.map((item) => (
+                                    <div
+                                        key={item.itemId}
+                                        className={`flex items-center justify-between rounded-xl p-3 ${darkMode
+                                            ? "bg-gray-800"
+                                            : "bg-gray-50"
+                                            }`}
+                                    >
+                                        <div>
+                                            <p className="font-medium">
+                                                {item.itemName}
+                                            </p>
+
+                                            <p
+                                                className={`text-xs mt-1 ${darkMode
+                                                    ? "text-gray-400"
+                                                    : "text-gray-500"
+                                                    }`}
+                                            >
+                                                {item.status === "OutOfStock"
+                                                    ? "Currently unavailable"
+                                                    : "Stock running low"}
+                                            </p>
+                                        </div>
+
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-xs font-semibold ${item.status === "OutOfStock"
+                                                ? "bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400"
+                                                : "bg-orange-100 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400"
+                                                }`}
+                                        >
+                                            {item.status === "OutOfStock"
+                                                ? "Out of Stock"
+                                                : `${item.quantityAvailable} left`}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+            </div>
+
+            {/* Internal Transfer Analytics */}
             <div className="mt-6">
                 <div
                     className={`rounded-2xl border p-6 shadow-sm ${darkMode
@@ -713,369 +972,116 @@ const Dashboard = () => {
                 >
                     <div className="mb-6">
                         <h2 className="text-lg font-bold">
-                            Top Selling Items
+                            Internal Transfer Analytics
                         </h2>
 
                         <p
                             className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"
                                 }`}
                         >
-                            Best-selling menu items over the last 7 days
+                            Transfer activity over the last 7 days
                         </p>
                     </div>
 
-                    <div className="h-[420px]">
-                        {topSellingItems.length === 0 ? (
-                            <div
-                                className={`h-full flex items-center justify-center ${darkMode ? "text-gray-500" : "text-gray-400"
+                    {/* Main Statistics */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {/* Successful */}
+                        <div
+                            className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-green-50"
+                                }`}
+                        >
+                            <p
+                                className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
                                     }`}
                             >
-                                No sales data available
-                            </div>
-                        ) : (
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart
-                                    data={topSellingItems}
-                                    layout="vertical"
-                                    margin={{
-                                        top: 5,
-                                        right: 50,
-                                        left: 20,
-                                        bottom: 5,
-                                    }}
-                                >
-                                    <CartesianGrid
-                                        strokeDasharray="3 3"
-                                        horizontal={false}
-                                        stroke={darkMode ? "#374151" : "#e5e7eb"}
-                                    />
+                                Successful
+                            </p>
 
-                                    <XAxis
-                                        type="number"
-                                        allowDecimals={false}
-                                        tick={{
-                                            fill: darkMode ? "#9ca3af" : "#6b7280",
-                                            fontSize: 12,
-                                        }}
-                                        axisLine={false}
-                                        tickLine={false}
-                                    />
+                            <p className="text-2xl font-bold text-green-500 mt-1">
+                                {transferAnalytics.successful}
+                            </p>
+                        </div>
 
-                                    <YAxis
-                                        type="category"
-                                        dataKey="itemName"
-                                        width={110}
-                                        tick={{
-                                            fill: darkMode ? "#d1d5db" : "#374151",
-                                            fontSize: 12,
-                                        }}
-                                        axisLine={false}
-                                        tickLine={false}
-                                    />
-
-                                    <Tooltip
-                                        formatter={(value) => [
-                                            value,
-                                            "Items Sold",
-                                        ]}
-                                        contentStyle={{
-                                            backgroundColor: darkMode ? "#111827" : "#ffffff",
-                                            border: darkMode
-                                                ? "1px solid #374151"
-                                                : "1px solid #e5e7eb",
-                                            borderRadius: "12px",
-                                        }}
-                                    />
-
-                                    <Bar
-                                        dataKey="quantitySold"
-                                        fill="#f97316"
-                                        radius={[0, 8, 8, 0]}
-                                        barSize={24}
-                                    >
-                                        <LabelList
-                                            dataKey="quantitySold"
-                                            position="right"
-                                            fill={darkMode ? "#d1d5db" : "#374151"}
-                                            fontSize={12}
-                                        />
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* Inventory Status */}
-            <div
-                className={`rounded-2xl border p-6 shadow-sm ${darkMode
-                    ? "bg-gray-900 border-gray-800"
-                    : "bg-white/90 border-gray-100"
-                    }`}
-            >
-                <div className="mb-6">
-                    <h2 className="text-lg font-bold">
-                        Inventory Status
-                    </h2>
-
-                    <p
-                        className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"
-                            }`}
-                    >
-                        Current menu inventory overview
-                    </p>
-                </div>
-
-                {/* Inventory Summary */}
-                <div className="grid grid-cols-2 gap-4">
-                    {/* In Stock */}
-                    <div
-                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-green-50"
-                            }`}
-                    >
-                        <p
-                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
-                                }`}
-                        >
-                            In Stock
-                        </p>
-
-                        <p className="text-2xl font-bold text-green-500 mt-1">
-                            {inventoryStatus.summary.inStock}
-                        </p>
-                    </div>
-
-                    {/* Low Stock */}
-                    <div
-                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-orange-50"
-                            }`}
-                    >
-                        <p
-                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
-                                }`}
-                        >
-                            Low Stock
-                        </p>
-
-                        <p className="text-2xl font-bold text-orange-500 mt-1">
-                            {inventoryStatus.summary.lowStock}
-                        </p>
-                    </div>
-
-                    {/* Out of Stock */}
-                    <div
-                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-red-50"
-                            }`}
-                    >
-                        <p
-                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
-                                }`}
-                        >
-                            Out of Stock
-                        </p>
-
-                        <p className="text-2xl font-bold text-red-500 mt-1">
-                            {inventoryStatus.summary.outOfStock}
-                        </p>
-                    </div>
-
-                    {/* Unlimited */}
-                    <div
-                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-blue-50"
-                            }`}
-                    >
-                        <p
-                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
-                                }`}
-                        >
-                            Unlimited
-                        </p>
-
-                        <p className="text-2xl font-bold text-blue-500 mt-1">
-                            {inventoryStatus.summary.unlimited}
-                        </p>
-                    </div>
-                </div>
-
-                {/* Alerts */}
-                <div className="mt-6">
-                    <h3 className="font-semibold mb-3">
-                        Stock Alerts
-                    </h3>
-
-                    {inventoryStatus.alerts.length === 0 ? (
+                        {/* Failed */}
                         <div
-                            className={`rounded-xl p-4 text-sm ${darkMode
-                                ? "bg-green-950/30 text-green-400"
-                                : "bg-green-50 text-green-600"
+                            className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-red-50"
                                 }`}
                         >
-                            ✓ All limited items have sufficient stock.
-                        </div>
-                    ) : (
-                        <div className="space-y-2 max-h-[220px] overflow-y-auto">
-                            {inventoryStatus.alerts.map((item) => (
-                                <div
-                                    key={item.itemId}
-                                    className={`flex items-center justify-between rounded-xl p-3 ${darkMode
-                                        ? "bg-gray-800"
-                                        : "bg-gray-50"
-                                        }`}
-                                >
-                                    <div>
-                                        <p className="font-medium">
-                                            {item.itemName}
-                                        </p>
+                            <p
+                                className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                    }`}
+                            >
+                                Failed
+                            </p>
 
-                                        <p
-                                            className={`text-xs mt-1 ${darkMode
-                                                ? "text-gray-400"
-                                                : "text-gray-500"
-                                                }`}
-                                        >
-                                            {item.status === "OutOfStock"
-                                                ? "Currently unavailable"
-                                                : "Stock running low"}
-                                        </p>
-                                    </div>
-
-                                    <span
-                                        className={`px-3 py-1 rounded-full text-xs font-semibold ${item.status === "OutOfStock"
-                                            ? "bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400"
-                                            : "bg-orange-100 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400"
-                                            }`}
-                                    >
-                                        {item.status === "OutOfStock"
-                                            ? "Out of Stock"
-                                            : `${item.quantityAvailable} left`}
-                                    </span>
-                                </div>
-                            ))}
+                            <p className="text-2xl font-bold text-red-500 mt-1">
+                                {transferAnalytics.failed}
+                            </p>
                         </div>
-                    )}
+
+                        {/* Unverified */}
+                        <div
+                            className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-orange-50"
+                                }`}
+                        >
+                            <p
+                                className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                    }`}
+                            >
+                                Unverified
+                            </p>
+
+                            <p className="text-2xl font-bold text-orange-500 mt-1">
+                                {transferAnalytics.unverified}
+                            </p>
+                        </div>
+
+                        {/* Total */}
+                        <div
+                            className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-blue-50"
+                                }`}
+                        >
+                            <p
+                                className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                    }`}
+                            >
+                                Total Transfers
+                            </p>
+
+                            <p className="text-2xl font-bold text-blue-500 mt-1">
+                                {transferAnalytics.totalTransfers}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Successful Amount */}
+                    <div
+                        className={`mt-4 rounded-xl p-5 ${darkMode ? "bg-gray-800" : "bg-gray-50"
+                            }`}
+                    >
+                        <p
+                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Successful Transfer Amount
+                        </p>
+
+                        <p className="text-2xl font-bold mt-1">
+                            {Number(
+                                transferAnalytics.successfulAmount || 0
+                            ).toLocaleString()}{" "}
+                            ETB
+                        </p>
+                    </div>
                 </div>
             </div>
-
-            {/* Internal Transfer Analytics */}
-            <div
-                className={`rounded-2xl border p-6 shadow-sm ${darkMode
-                    ? "bg-gray-900 border-gray-800"
-                    : "bg-white/90 border-gray-100"
-                    }`}
-            >
-                <div className="mb-6">
-                    <h2 className="text-lg font-bold">
-                        Internal Transfer Analytics
-                    </h2>
-
-                    <p
-                        className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"
-                            }`}
-                    >
-                        Transfer activity over the last 7 days
-                    </p>
-                </div>
-
-                {/* Main Statistics */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {/* Successful */}
-                    <div
-                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-green-50"
-                            }`}
-                    >
-                        <p
-                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
-                                }`}
-                        >
-                            Successful
-                        </p>
-
-                        <p className="text-2xl font-bold text-green-500 mt-1">
-                            {transferAnalytics.successful}
-                        </p>
-                    </div>
-
-                    {/* Failed */}
-                    <div
-                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-red-50"
-                            }`}
-                    >
-                        <p
-                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
-                                }`}
-                        >
-                            Failed
-                        </p>
-
-                        <p className="text-2xl font-bold text-red-500 mt-1">
-                            {transferAnalytics.failed}
-                        </p>
-                    </div>
-
-                    {/* Unverified */}
-                    <div
-                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-orange-50"
-                            }`}
-                    >
-                        <p
-                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
-                                }`}
-                        >
-                            Unverified
-                        </p>
-
-                        <p className="text-2xl font-bold text-orange-500 mt-1">
-                            {transferAnalytics.unverified}
-                        </p>
-                    </div>
-
-                    {/* Total */}
-                    <div
-                        className={`rounded-xl p-4 ${darkMode ? "bg-gray-800" : "bg-blue-50"
-                            }`}
-                    >
-                        <p
-                            className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
-                                }`}
-                        >
-                            Total Transfers
-                        </p>
-
-                        <p className="text-2xl font-bold text-blue-500 mt-1">
-                            {transferAnalytics.totalTransfers}
-                        </p>
-                    </div>
-                </div>
-
-                {/* Successful Amount */}
-                <div
-                    className={`mt-4 rounded-xl p-5 ${darkMode ? "bg-gray-800" : "bg-gray-50"
-                        }`}
-                >
-                    <p
-                        className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"
-                            }`}
-                    >
-                        Successful Transfer Amount
-                    </p>
-
-                    <p className="text-2xl font-bold mt-1">
-                        {Number(
-                            transferAnalytics.successfulAmount || 0
-                        ).toLocaleString()}{" "}
-                        ETB
-                    </p>
-                </div>
-            </div>
-
 
             {/* Recent Orders */}
             <div className="mt-6">
                 <div
                     className={`rounded-2xl border shadow-sm overflow-hidden ${darkMode
-                            ? "bg-gray-900 border-gray-800"
-                            : "bg-white/90 border-gray-100"
+                        ? "bg-gray-900 border-gray-800"
+                        : "bg-white/90 border-gray-100"
                         }`}
                 >
                     <div className="p-6">
@@ -1200,10 +1206,10 @@ const Dashboard = () => {
                                             <td className="px-6 py-4">
                                                 <span
                                                     className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${order.status === "Served"
-                                                            ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400"
-                                                            : order.status === "Pending"
-                                                                ? "bg-orange-100 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400"
-                                                                : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                                                        ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400"
+                                                        : order.status === "Pending"
+                                                            ? "bg-orange-100 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400"
+                                                            : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
                                                         }`}
                                                 >
                                                     {order.status}
