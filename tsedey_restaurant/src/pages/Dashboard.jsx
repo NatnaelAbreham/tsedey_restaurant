@@ -7,6 +7,9 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
+    PieChart,
+    Pie,
+    Cell,
 } from "recharts";
 import api from "../api/api";
 import { useTheme } from "../context/ThemeContext";
@@ -24,17 +27,19 @@ const Dashboard = () => {
     });
     const [revenueTrend, setRevenueTrend] = useState([]);
     const [ordersTrend, setOrdersTrend] = useState([]);
+    const [paymentMethods, setPaymentMethods] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchDashboardSummary = async () => {
         try {
             setLoading(true);
 
-            const [summaryResponse, revenueResponse, ordersResponse] =
+            const [summaryResponse, revenueResponse, ordersResponse, paymentResponse] =
                 await Promise.all([
                     api.get("/dashboard-summary"),
                     api.get("/revenue-trend"),
                     api.get("/orders-trend"),
+                    api.get("/payment-methods"),
                 ]);
 
             if (summaryResponse.data.success) {
@@ -47,6 +52,10 @@ const Dashboard = () => {
 
             if (ordersResponse.data.success) {
                 setOrdersTrend(ordersResponse.data.data);
+            }
+
+            if (paymentResponse.data.success) {
+                setPaymentMethods(paymentResponse.data.data);
             }
         } catch (error) {
             console.error("Failed to load dashboard data:", error);
@@ -174,7 +183,7 @@ const Dashboard = () => {
                 ))}
             </div>
 
-            {/* Charts will be added here */}
+
 
 
             {/* Revenue & Orders Trends */}
@@ -390,6 +399,135 @@ const Dashboard = () => {
                     </div>
                 </div>
 
+            </div>
+
+
+
+
+            {/* Payment Methods */}
+            <div className="mt-6">
+                <div
+                    className={`rounded-2xl border p-6 shadow-sm ${darkMode
+                            ? "bg-gray-900 border-gray-800"
+                            : "bg-white/90 border-gray-100"
+                        }`}
+                >
+                    <div className="mb-5">
+                        <h2 className="text-lg font-bold">
+                            Payment Methods
+                        </h2>
+
+                        <p
+                            className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Payment distribution over the last 7 days
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+
+                        {/* Donut Chart */}
+                        <div className="h-[280px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={paymentMethods}
+                                        dataKey="orders"
+                                        nameKey="paymentMethod"
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={70}
+                                        outerRadius={105}
+                                        paddingAngle={3}
+                                        startAngle={90}
+                                        endAngle={-270}
+                                    >
+                                        {paymentMethods.map((entry, index) => (
+                                            <Cell
+                                                key={`cell-${index}`}
+                                                fill={
+                                                    entry.paymentMethod === "Cash"
+                                                        ? "#22c55e"
+                                                        : "#3b82f6"
+                                                }
+                                            />
+                                        ))}
+                                    </Pie>
+
+                                    <Tooltip
+                                        formatter={(value, name) => [
+                                            value,
+                                            name,
+                                        ]}
+                                        contentStyle={{
+                                            backgroundColor: darkMode ? "#111827" : "#ffffff",
+                                            border: darkMode
+                                                ? "1px solid #374151"
+                                                : "1px solid #e5e7eb",
+                                            borderRadius: "12px",
+                                        }}
+                                    />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
+
+                        {/* Payment Details */}
+                        <div className="space-y-4">
+                            {paymentMethods.map((payment) => (
+                                <div
+                                    key={payment.paymentMethod}
+                                    className={`flex items-center justify-between p-4 rounded-xl ${darkMode
+                                            ? "bg-gray-800"
+                                            : "bg-gray-50"
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div
+                                            className={`w-3 h-3 rounded-full ${payment.paymentMethod === "Cash"
+                                                    ? "bg-green-500"
+                                                    : "bg-blue-500"
+                                                }`}
+                                        />
+
+                                        <div>
+                                            <p className="font-semibold">
+                                                {payment.paymentMethod === "InternalTransfer"
+                                                    ? "Internal Transfer"
+                                                    : payment.paymentMethod}
+                                            </p>
+
+                                            <p
+                                                className={`text-xs ${darkMode
+                                                        ? "text-gray-400"
+                                                        : "text-gray-500"
+                                                    }`}
+                                            >
+                                                {payment.orders} orders
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="text-right">
+                                        <p className="font-bold">
+                                            {Number(payment.amount).toFixed(2)}
+                                        </p>
+
+                                        <p
+                                            className={`text-xs ${darkMode
+                                                    ? "text-gray-400"
+                                                    : "text-gray-500"
+                                                }`}
+                                        >
+                                            Total
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
     );
