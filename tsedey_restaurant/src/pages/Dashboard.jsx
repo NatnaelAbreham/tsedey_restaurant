@@ -3,6 +3,8 @@ import {
     ResponsiveContainer,
     AreaChart,
     Area,
+    BarChart,
+    Bar,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -10,6 +12,7 @@ import {
     PieChart,
     Pie,
     Cell,
+    LabelList,
 } from "recharts";
 import api from "../api/api";
 import { useTheme } from "../context/ThemeContext";
@@ -28,19 +31,26 @@ const Dashboard = () => {
     const [revenueTrend, setRevenueTrend] = useState([]);
     const [ordersTrend, setOrdersTrend] = useState([]);
     const [paymentMethods, setPaymentMethods] = useState([]);
+    const [topSellingItems, setTopSellingItems] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchDashboardSummary = async () => {
         try {
             setLoading(true);
 
-            const [summaryResponse, revenueResponse, ordersResponse, paymentResponse] =
-                await Promise.all([
-                    api.get("/dashboard-summary"),
-                    api.get("/revenue-trend"),
-                    api.get("/orders-trend"),
-                    api.get("/payment-methods"),
-                ]);
+            const [
+                summaryResponse,
+                revenueResponse,
+                ordersResponse,
+                paymentResponse,
+                topItemsResponse,
+            ] = await Promise.all([
+                api.get("/dashboard-summary"),
+                api.get("/revenue-trend"),
+                api.get("/orders-trend"),
+                api.get("/payment-methods"),
+                api.get("/top-selling-items"),
+            ]);
 
             if (summaryResponse.data.success) {
                 setSummary(summaryResponse.data.data);
@@ -56,6 +66,10 @@ const Dashboard = () => {
 
             if (paymentResponse.data.success) {
                 setPaymentMethods(paymentResponse.data.data);
+            }
+
+            if (topItemsResponse.data.success) {
+                setTopSellingItems(topItemsResponse.data.data);
             }
         } catch (error) {
             console.error("Failed to load dashboard data:", error);
@@ -408,8 +422,8 @@ const Dashboard = () => {
             <div className="mt-6">
                 <div
                     className={`rounded-2xl border p-6 shadow-sm ${darkMode
-                            ? "bg-gray-900 border-gray-800"
-                            : "bg-white/90 border-gray-100"
+                        ? "bg-gray-900 border-gray-800"
+                        : "bg-white/90 border-gray-100"
                         }`}
                 >
                     <div className="mb-5">
@@ -478,15 +492,15 @@ const Dashboard = () => {
                                 <div
                                     key={payment.paymentMethod}
                                     className={`flex items-center justify-between p-4 rounded-xl ${darkMode
-                                            ? "bg-gray-800"
-                                            : "bg-gray-50"
+                                        ? "bg-gray-800"
+                                        : "bg-gray-50"
                                         }`}
                                 >
                                     <div className="flex items-center gap-3">
                                         <div
                                             className={`w-3 h-3 rounded-full ${payment.paymentMethod === "Cash"
-                                                    ? "bg-green-500"
-                                                    : "bg-blue-500"
+                                                ? "bg-green-500"
+                                                : "bg-blue-500"
                                                 }`}
                                         />
 
@@ -499,8 +513,8 @@ const Dashboard = () => {
 
                                             <p
                                                 className={`text-xs ${darkMode
-                                                        ? "text-gray-400"
-                                                        : "text-gray-500"
+                                                    ? "text-gray-400"
+                                                    : "text-gray-500"
                                                     }`}
                                             >
                                                 {payment.orders} orders
@@ -515,8 +529,8 @@ const Dashboard = () => {
 
                                         <p
                                             className={`text-xs ${darkMode
-                                                    ? "text-gray-400"
-                                                    : "text-gray-500"
+                                                ? "text-gray-400"
+                                                : "text-gray-500"
                                                 }`}
                                         >
                                             Total
@@ -526,6 +540,111 @@ const Dashboard = () => {
                             ))}
                         </div>
 
+                    </div>
+                </div>
+            </div>
+
+
+            {/* Top Selling Items */}
+            <div className="mt-6">
+                <div
+                    className={`rounded-2xl border p-6 shadow-sm ${darkMode
+                            ? "bg-gray-900 border-gray-800"
+                            : "bg-white/90 border-gray-100"
+                        }`}
+                >
+                    <div className="mb-6">
+                        <h2 className="text-lg font-bold">
+                            Top Selling Items
+                        </h2>
+
+                        <p
+                            className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "text-gray-500"
+                                }`}
+                        >
+                            Best-selling menu items over the last 7 days
+                        </p>
+                    </div>
+
+                    <div className="h-[420px]">
+                        {topSellingItems.length === 0 ? (
+                            <div
+                                className={`h-full flex items-center justify-center ${darkMode ? "text-gray-500" : "text-gray-400"
+                                    }`}
+                            >
+                                No sales data available
+                            </div>
+                        ) : (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart
+                                    data={topSellingItems}
+                                    layout="vertical"
+                                    margin={{
+                                        top: 5,
+                                        right: 50,
+                                        left: 20,
+                                        bottom: 5,
+                                    }}
+                                >
+                                    <CartesianGrid
+                                        strokeDasharray="3 3"
+                                        horizontal={false}
+                                        stroke={darkMode ? "#374151" : "#e5e7eb"}
+                                    />
+
+                                    <XAxis
+                                        type="number"
+                                        allowDecimals={false}
+                                        tick={{
+                                            fill: darkMode ? "#9ca3af" : "#6b7280",
+                                            fontSize: 12,
+                                        }}
+                                        axisLine={false}
+                                        tickLine={false}
+                                    />
+
+                                    <YAxis
+                                        type="category"
+                                        dataKey="itemName"
+                                        width={110}
+                                        tick={{
+                                            fill: darkMode ? "#d1d5db" : "#374151",
+                                            fontSize: 12,
+                                        }}
+                                        axisLine={false}
+                                        tickLine={false}
+                                    />
+
+                                    <Tooltip
+                                        formatter={(value) => [
+                                            value,
+                                            "Items Sold",
+                                        ]}
+                                        contentStyle={{
+                                            backgroundColor: darkMode ? "#111827" : "#ffffff",
+                                            border: darkMode
+                                                ? "1px solid #374151"
+                                                : "1px solid #e5e7eb",
+                                            borderRadius: "12px",
+                                        }}
+                                    />
+
+                                    <Bar
+                                        dataKey="quantitySold"
+                                        fill="#f97316"
+                                        radius={[0, 8, 8, 0]}
+                                        barSize={24}
+                                    >
+                                        <LabelList
+                                            dataKey="quantitySold"
+                                            position="right"
+                                            fill={darkMode ? "#d1d5db" : "#374151"}
+                                            fontSize={12}
+                                        />
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        )}
                     </div>
                 </div>
             </div>
