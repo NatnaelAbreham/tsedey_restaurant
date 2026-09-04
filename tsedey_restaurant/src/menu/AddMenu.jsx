@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from "../api/api";
 
 // Toast notification component
 
@@ -112,6 +113,7 @@ const AddMenu = () => {
     setIsSubmitting(true);
 
     const formData = new FormData();
+
     formData.append("Name", form.name.trim());
     formData.append("Description", form.description.trim());
     formData.append("Price", Number(form.price));
@@ -121,21 +123,16 @@ const AddMenu = () => {
     formData.append("image", form.image);
 
     try {
-      const response = await fetch("http://localhost:5238/addmenu", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await api.post("/addmenu", formData);
 
-      const text = await response.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (err) {
-        data = { error: text };
-      }
+      // Axios already parses JSON
+      const data = response.data;
 
-      if (response.ok) {
-        showToast('Menu item added successfully!', 'success');
+      if (data?.success) {
+        showToast(
+          data.message || "Menu item added successfully!",
+          "success"
+        );
 
         // Reset form
         setForm({
@@ -146,18 +143,33 @@ const AddMenu = () => {
           is_available: true,
           image: null,
         });
+
         setPreview(null);
         setFileName("No file selected");
 
         // Reset file input
-        const fileInput = document.querySelector('input[type="file"]');
-        if (fileInput) fileInput.value = '';
+        const fileInput = document.querySelector(
+          'input[type="file"]'
+        );
+
+        if (fileInput) {
+          fileInput.value = "";
+        }
       } else {
-        showToast(data?.error || data?.message || "Failed to add menu item", 'error');
+        showToast(
+          data?.message || data?.error || "Failed to add menu item",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Error:", error);
-      showToast("Network error. Please check your connection.", 'error');
+
+      const message =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Network error. Please check your connection.";
+
+      showToast(message, "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -167,8 +179,8 @@ const AddMenu = () => {
     <>
       <section
         className={`min-h-screen flex items-center justify-center px-4 py-16 transition-all duration-300 ${darkMode
-            ? "bg-gradient-to-b from-gray-950 to-gray-900 text-white"
-            : "bg-gradient-to-b from-[#e7f2fd] to-white text-gray-900"
+          ? "bg-gradient-to-b from-gray-950 to-gray-900 text-white"
+          : "bg-gradient-to-b from-[#e7f2fd] to-white text-gray-900"
           }`}
       >
         <div className="max-w-4xl w-full">
@@ -178,8 +190,8 @@ const AddMenu = () => {
 
           <div
             className={`backdrop-blur-xl shadow-2xl rounded-3xl p-8 border transition-all duration-300 ${darkMode
-                ? "bg-gray-900/80 border-gray-800"
-                : "bg-white/80 border-gray-100"
+              ? "bg-gray-900/80 border-gray-800"
+              : "bg-white/80 border-gray-100"
               }`}
           >
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -195,8 +207,8 @@ const AddMenu = () => {
                   onChange={handleChange}
                   placeholder="e.g. Burger Deluxe"
                   className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-orange-400 transition ${darkMode
-                      ? "bg-gray-800 border-gray-700 text-white"
-                      : "bg-white border-gray-200"
+                    ? "bg-gray-800 border-gray-700 text-white"
+                    : "bg-white border-gray-200"
                     }`}
                   required
                 />
@@ -214,8 +226,8 @@ const AddMenu = () => {
                   rows="4"
                   placeholder="Write something delicious..."
                   className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none ${darkMode
-                      ? "bg-gray-800 border-gray-700 text-white"
-                      : "bg-white border-gray-200"
+                    ? "bg-gray-800 border-gray-700 text-white"
+                    : "bg-white border-gray-200"
                     }`}
                   required
                 />
@@ -235,8 +247,8 @@ const AddMenu = () => {
                     onChange={handlePrice}
                     placeholder="0.00"
                     className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-orange-400 ${darkMode
-                        ? "bg-gray-800 border-gray-700 text-white"
-                        : "bg-white border-gray-200"
+                      ? "bg-gray-800 border-gray-700 text-white"
+                      : "bg-white border-gray-200"
                       }`}
                     required
                   />
@@ -252,8 +264,8 @@ const AddMenu = () => {
                     value={form.category}
                     onChange={handleChange}
                     className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-orange-400 ${darkMode
-                        ? "bg-gray-800 border-gray-700 text-white"
-                        : "bg-white border-gray-200"
+                      ? "bg-gray-800 border-gray-700 text-white"
+                      : "bg-white border-gray-200"
                       }`}
                   >
                     <option value="food">Food</option>
@@ -269,8 +281,8 @@ const AddMenu = () => {
                 </label>
                 <label
                   className={`flex items-center justify-between px-4 py-3 rounded-xl border cursor-pointer transition-all duration-200 ${darkMode
-                      ? "bg-gray-800 border-gray-700 text-white hover:bg-gray-750"
-                      : "bg-white border-gray-200 hover:bg-gray-50"
+                    ? "bg-gray-800 border-gray-700 text-white hover:bg-gray-750"
+                    : "bg-white border-gray-200 hover:bg-gray-50"
                     }`}
                 >
                   <span className="text-sm truncate">{fileName}</span>
@@ -326,8 +338,8 @@ const AddMenu = () => {
                 type="submit"
                 disabled={isSubmitting}
                 className={`w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg ${isSubmitting
-                    ? 'opacity-75 cursor-not-allowed'
-                    : 'hover:opacity-90 active:scale-95'
+                  ? 'opacity-75 cursor-not-allowed'
+                  : 'hover:opacity-90 active:scale-95'
                   }`}
               >
                 {isSubmitting ? (

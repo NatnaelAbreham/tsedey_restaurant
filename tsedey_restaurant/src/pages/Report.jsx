@@ -206,6 +206,61 @@ const Report = () => {
             console.error("CSV export failed:", error);
         }
     };
+    //--------------------------------
+    // handle Export Excel
+    // --------------------------------
+    const handleExportExcel = async () => {
+        try {
+            const params = new URLSearchParams();
+
+            if (fromDate) params.append("fromDate", fromDate);
+
+            if (toDate) params.append("toDate", toDate);
+
+            if (status && status !== "All") {
+                params.append("status", status);
+            }
+
+            if (paymentMethod && paymentMethod !== "All") {
+                params.append("paymentMethod", paymentMethod);
+            }
+
+            if (search.trim()) {
+                params.append("search", search.trim());
+            }
+
+            const response = await api.get(
+                `/export-excel?${params.toString()}`,
+                {
+                    responseType: "blob",
+                }
+            );
+
+            const blob = new Blob([response.data], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.download = `OrderReport_${new Date()
+                .toISOString()
+                .slice(0, 10)}.xlsx`;
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            link.remove();
+
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Excel export failed:", error);
+        }
+    };
+
     // --------------------------------
     // Reset
     // --------------------------------
@@ -242,6 +297,7 @@ const Report = () => {
         setExpandedOrder(null);
         fetchReport(page);
     };
+    
     return (
         <div
             className={`min-h-screen p-4 md:p-6 lg:p-8 transition-colors ${darkMode
@@ -498,6 +554,18 @@ const Report = () => {
                         >
                             {/* <span></span> */}
                             Export CSV
+                        </button>
+                        <button
+                            onClick={handleExportExcel}
+                            className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2
+    transition
+    ${darkMode
+                                    ? "bg-green-700 hover:bg-green-800 text-white"
+                                    : "bg-green-600 hover:bg-green-700 text-white"
+                                }`}
+                        >
+                            {/* <span></span> */}
+                            Export Excel
                         </button>
                     </div>
                 </div>
