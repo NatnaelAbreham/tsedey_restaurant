@@ -6,6 +6,7 @@ import Menu from "../components/Menu";
 import Dashboard from "../pages/Dashboard";
 import OrderManagement from "../components/OrderManagement"; 
 import ContactPage from "../pages/ContactPage";
+import Report from "../pages/Report";
 import AddMenu from '../menu/AddMenu.jsx';
 import InventoryPage from '../menu/InventoryPage.jsx';
 const AppRoutes = () => {
@@ -18,6 +19,7 @@ const AppRoutes = () => {
       <Route path="/ordermanagement" element={<OrderManagement />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/report" element={<Report />} />
     </Routes>
   );
 };
