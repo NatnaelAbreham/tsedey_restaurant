@@ -55,17 +55,17 @@ const Navbar = () => {
             Menu
           </Link>
           <Link to="/addmenu" className={linkClass("/addmenu")}>
-            Add Menu
+            Add
           </Link>
           <Link to="/updatemenu" className={linkClass("/updatemenu")}>
-            Update Menu
+            Update
           </Link>
           <Link to="/addquantity" className={linkClass("/addquantity")}>
-            Add Quantity
+             Quantity
           </Link>
 
           <Link to="/ordermanagement" className={linkClass("/ordermanagement")}>
-            Order Management
+            Order 
           </Link>
 
           <Link to="/contact" className={linkClass("/contact")}>
