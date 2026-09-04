@@ -57,6 +57,9 @@ const Navbar = () => {
           <Link to="/addmenu" className={linkClass("/addmenu")}>
             Add Menu
           </Link>
+          <Link to="/updatemenu" className={linkClass("/updatemenu")}>
+            Update Menu
+          </Link>
           <Link to="/addquantity" className={linkClass("/addquantity")}>
             Add Quantity
           </Link>

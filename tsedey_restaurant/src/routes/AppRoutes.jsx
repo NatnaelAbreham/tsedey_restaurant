@@ -8,6 +8,7 @@ import OrderManagement from "../components/OrderManagement";
 import ContactPage from "../pages/ContactPage";
 import Report from "../pages/Report";
 import AddMenu from '../menu/AddMenu.jsx';
+import UpdateMenu from '../menu/UpdateMenu.jsx';
 import InventoryPage from '../menu/InventoryPage.jsx';
 const AppRoutes = () => {
   return (
@@ -15,6 +16,7 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/menu" element={<Menu />} />
       <Route path="/addmenu" element={<AddMenu />} />
+      <Route path="/updatemenu" element={<UpdateMenu />} />
       <Route path="/addquantity" element={<InventoryPage />} />
       <Route path="/ordermanagement" element={<OrderManagement />} />
       <Route path="/contact" element={<ContactPage />} />
