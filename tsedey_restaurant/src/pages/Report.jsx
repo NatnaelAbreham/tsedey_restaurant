@@ -159,7 +159,53 @@ const Report = () => {
     const handleApplyFilter = () => {
         fetchReport(1);
     };
+    //--------------------------------
+    // handle Export Csv 
+    // --------------------------------
+    const handleExportCsv = async () => {
+        try {
+            const params = new URLSearchParams();
 
+            if (fromDate) params.append("fromDate", fromDate);
+            if (toDate) params.append("toDate", toDate);
+            if (status && status !== "All") {
+                params.append("status", status);
+            }
+            if (paymentMethod && paymentMethod !== "All") {
+                params.append("paymentMethod", paymentMethod);
+            }
+            if (search.trim()) {
+                params.append("search", search.trim());
+            }
+
+            const response = await api.get(
+                `/export-csv?${params.toString()}`,
+                {
+                    responseType: "blob",
+                }
+            );
+
+            const blob = new Blob([response.data], {
+                type: "text/csv;charset=utf-8;",
+            });
+
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `OrderReport_${new Date()
+                .toISOString()
+                .slice(0, 10)}.csv`;
+
+            document.body.appendChild(link);
+            link.click();
+
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("CSV export failed:", error);
+        }
+    };
     // --------------------------------
     // Reset
     // --------------------------------
@@ -441,6 +487,18 @@ const Report = () => {
                         >
                             {loading ? "Loading..." : "Apply Filter"}
                         </button>
+                        <button
+                            onClick={handleExportCsv}
+                            className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2
+    transition
+    ${darkMode
+                                    ? "bg-green-600 hover:bg-green-700 text-white"
+                                    : "bg-green-500 hover:bg-green-600 text-white"
+                                }`}
+                        >
+                            {/* <span></span> */}
+                            Export CSV
+                        </button>
                     </div>
                 </div>
 
@@ -616,8 +674,8 @@ const Report = () => {
 
                 <div
                     className={`rounded-2xl border shadow-sm overflow-hidden ${darkMode
-                            ? "bg-gray-900 border-gray-800"
-                            : "bg-white/90 border-gray-100"
+                        ? "bg-gray-900 border-gray-800"
+                        : "bg-white/90 border-gray-100"
                         }`}
                 >
                     {loading ? (
@@ -698,8 +756,8 @@ const Report = () => {
                                                             )
                                                         }
                                                         className={`cursor-pointer transition ${darkMode
-                                                                ? "hover:bg-gray-800/60"
-                                                                : "hover:bg-gray-50"
+                                                            ? "hover:bg-gray-800/60"
+                                                            : "hover:bg-gray-50"
                                                             }`}
                                                     >
                                                         {/* Expand Button */}
@@ -716,14 +774,14 @@ const Report = () => {
                                                                     );
                                                                 }}
                                                                 className={`w-7 h-7 rounded-lg flex items-center justify-center transition ${darkMode
-                                                                        ? "bg-gray-800 hover:bg-gray-700"
-                                                                        : "bg-gray-100 hover:bg-gray-200"
+                                                                    ? "bg-gray-800 hover:bg-gray-700"
+                                                                    : "bg-gray-100 hover:bg-gray-200"
                                                                     }`}
                                                             >
                                                                 <span
                                                                     className={`text-xs transition-transform ${isExpanded
-                                                                            ? "rotate-90"
-                                                                            : ""
+                                                                        ? "rotate-90"
+                                                                        : ""
                                                                         }`}
                                                                 >
                                                                     ▶
@@ -739,8 +797,8 @@ const Report = () => {
                                                         {/* Date */}
                                                         <td
                                                             className={`px-5 py-4 whitespace-nowrap ${darkMode
-                                                                    ? "text-gray-400"
-                                                                    : "text-gray-500"
+                                                                ? "text-gray-400"
+                                                                : "text-gray-500"
                                                                 }`}
                                                         >
                                                             {new Date(
@@ -752,8 +810,8 @@ const Report = () => {
                                                         <td className="px-5 py-4">
                                                             <span
                                                                 className={`inline-flex px-2.5 py-1 rounded-lg text-xs font-medium ${darkMode
-                                                                        ? "bg-gray-800 text-gray-300"
-                                                                        : "bg-gray-100 text-gray-600"
+                                                                    ? "bg-gray-800 text-gray-300"
+                                                                    : "bg-gray-100 text-gray-600"
                                                                     }`}
                                                             >
                                                                 {itemCount}{" "}
@@ -782,12 +840,12 @@ const Report = () => {
                                                         <td className="px-5 py-4">
                                                             <span
                                                                 className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${order.status ===
-                                                                        "Served"
-                                                                        ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400"
-                                                                        : order.status ===
-                                                                            "Pending"
-                                                                            ? "bg-orange-100 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400"
-                                                                            : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                                                                    "Served"
+                                                                    ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400"
+                                                                    : order.status ===
+                                                                        "Pending"
+                                                                        ? "bg-orange-100 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400"
+                                                                        : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
                                                                     }`}
                                                             >
                                                                 {order.status}
@@ -815,8 +873,8 @@ const Report = () => {
 
                                                                             <p
                                                                                 className={`text-xs mt-1 ${darkMode
-                                                                                        ? "text-gray-500"
-                                                                                        : "text-gray-400"
+                                                                                    ? "text-gray-500"
+                                                                                    : "text-gray-400"
                                                                                     }`}
                                                                             >
                                                                                 {order.orderNumber}
@@ -826,8 +884,8 @@ const Report = () => {
                                                                         <div className="text-right">
                                                                             <p
                                                                                 className={`text-xs ${darkMode
-                                                                                        ? "text-gray-500"
-                                                                                        : "text-gray-400"
+                                                                                    ? "text-gray-500"
+                                                                                    : "text-gray-400"
                                                                                     }`}
                                                                             >
                                                                                 Order Total
@@ -843,8 +901,8 @@ const Report = () => {
 
                                                                     <div
                                                                         className={`rounded-xl border overflow-hidden ${darkMode
-                                                                                ? "border-gray-800"
-                                                                                : "border-gray-200"
+                                                                            ? "border-gray-800"
+                                                                            : "border-gray-200"
                                                                             }`}
                                                                     >
                                                                         <table className="w-full text-sm">
@@ -926,15 +984,15 @@ const Report = () => {
                             {pagination.totalPages > 1 && (
                                 <div
                                     className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-5 py-4 border-t ${darkMode
-                                            ? "border-gray-800"
-                                            : "border-gray-100"
+                                        ? "border-gray-800"
+                                        : "border-gray-100"
                                         }`}
                                 >
                                     {/* Results Info */}
                                     <p
                                         className={`text-sm ${darkMode
-                                                ? "text-gray-400"
-                                                : "text-gray-500"
+                                            ? "text-gray-400"
+                                            : "text-gray-500"
                                             }`}
                                     >
                                         Showing{" "}
@@ -960,10 +1018,10 @@ const Report = () => {
                                             }
                                             disabled={pagination.page === 1}
                                             className={`px-3 py-2 rounded-lg text-sm font-medium transition ${pagination.page === 1
-                                                    ? "opacity-40 cursor-not-allowed"
-                                                    : darkMode
-                                                        ? "bg-gray-800 hover:bg-gray-700"
-                                                        : "bg-gray-100 hover:bg-gray-200"
+                                                ? "opacity-40 cursor-not-allowed"
+                                                : darkMode
+                                                    ? "bg-gray-800 hover:bg-gray-700"
+                                                    : "bg-gray-100 hover:bg-gray-200"
                                                 }`}
                                         >
                                             Previous
@@ -1005,8 +1063,8 @@ const Report = () => {
                                                         {showEllipsis && (
                                                             <span
                                                                 className={`px-2 ${darkMode
-                                                                        ? "text-gray-600"
-                                                                        : "text-gray-400"
+                                                                    ? "text-gray-600"
+                                                                    : "text-gray-400"
                                                                     }`}
                                                             >
                                                                 ...
@@ -1018,11 +1076,11 @@ const Report = () => {
                                                                 handlePageChange(page)
                                                             }
                                                             className={`w-9 h-9 rounded-lg text-sm font-medium transition ${pagination.page ===
-                                                                    page
-                                                                    ? "bg-orange-500 text-white"
-                                                                    : darkMode
-                                                                        ? "bg-gray-800 hover:bg-gray-700 text-gray-300"
-                                                                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                                                                page
+                                                                ? "bg-orange-500 text-white"
+                                                                : darkMode
+                                                                    ? "bg-gray-800 hover:bg-gray-700 text-gray-300"
+                                                                    : "bg-gray-100 hover:bg-gray-200 text-gray-700"
                                                                 }`}
                                                         >
                                                             {page}
@@ -1042,11 +1100,11 @@ const Report = () => {
                                                 pagination.totalPages
                                             }
                                             className={`px-3 py-2 rounded-lg text-sm font-medium transition ${pagination.page ===
-                                                    pagination.totalPages
-                                                    ? "opacity-40 cursor-not-allowed"
-                                                    : darkMode
-                                                        ? "bg-gray-800 hover:bg-gray-700"
-                                                        : "bg-gray-100 hover:bg-gray-200"
+                                                pagination.totalPages
+                                                ? "opacity-40 cursor-not-allowed"
+                                                : darkMode
+                                                    ? "bg-gray-800 hover:bg-gray-700"
+                                                    : "bg-gray-100 hover:bg-gray-200"
                                                 }`}
                                         >
                                             Next
