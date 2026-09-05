@@ -201,6 +201,75 @@ const UpdateMenu = () => {
 
         setImagePreview(previewUrl);
     };
+    const handleUpdateImage = async () => {
+        if (!selectedItem) {
+            showToast("Please select a menu item.", "error");
+            return;
+        }
+
+        if (!newImage) {
+            showToast("Please select a new image.", "error");
+            return;
+        }
+
+        try {
+            setImageUploading(true);
+
+            const formData = new FormData();
+
+            formData.append("image", newImage);
+
+            const response = await api.put(
+                `/updatemenu-image/${selectedItem.id}`,
+                formData
+            );
+
+            const data = response.data;
+
+            if (data?.success) {
+                const updatedImageUrl = data.imageUrl;
+
+                setSelectedItem((prev) => ({
+                    ...prev,
+                    imageUrl: updatedImageUrl,
+                }));
+
+                setItems((prevItems) =>
+                    prevItems.map((item) =>
+                        item.id === selectedItem.id
+                            ? {
+                                ...item,
+                                imageUrl: updatedImageUrl,
+                            }
+                            : item
+                    )
+                );
+
+                setNewImage(null);
+                setImagePreview(null);
+
+                showToast(
+                    data.message || "Image updated successfully.",
+                    "success"
+                );
+            } else {
+                showToast(
+                    data?.message || "Failed to update image.",
+                    "error"
+                );
+            }
+        } catch (error) {
+            console.error("Image update failed:", error);
+
+            showToast(
+                error.response?.data?.message ||
+                "Failed to update image.",
+                "error"
+            );
+        } finally {
+            setImageUploading(false);
+        }
+    };
     return (
         <div
             className={`min-h-screen p-6 transition-colors duration-300 ${darkMode
@@ -469,8 +538,8 @@ const UpdateMenu = () => {
 
                                     <div
                                         className={`p-4 rounded-xl border ${darkMode
-                                                ? "bg-gray-800 border-gray-700"
-                                                : "bg-gray-50 border-gray-200"
+                                            ? "bg-gray-800 border-gray-700"
+                                            : "bg-gray-50 border-gray-200"
                                             }`}
                                     >
                                         <div className="flex flex-col md:flex-row gap-5 md:items-center">
@@ -492,8 +561,8 @@ const UpdateMenu = () => {
                                                 ) : (
                                                     <div
                                                         className={`w-full h-full flex items-center justify-center ${darkMode
-                                                                ? "bg-gray-700 text-gray-400"
-                                                                : "bg-gray-100 text-gray-500"
+                                                            ? "bg-gray-700 text-gray-400"
+                                                            : "bg-gray-100 text-gray-500"
                                                             }`}
                                                     >
                                                         No Image
@@ -507,8 +576,8 @@ const UpdateMenu = () => {
                                                     accept=".jpg,.jpeg,.png,.webp"
                                                     onChange={handleImageChange}
                                                     className={`w-full rounded-lg border p-3 ${darkMode
-                                                            ? "bg-gray-900 border-gray-700 text-white"
-                                                            : "bg-white border-gray-300"
+                                                        ? "bg-gray-900 border-gray-700 text-white"
+                                                        : "bg-white border-gray-300"
                                                         }`}
                                                 />
 
