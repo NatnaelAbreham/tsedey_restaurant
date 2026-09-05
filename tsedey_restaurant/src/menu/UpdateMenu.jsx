@@ -159,6 +159,9 @@ const UpdateMenu = () => {
     // Select item
     const handleSelectItem = (item) => {
         setSelectedItem(item);
+
+        setNewImage(null);
+        setImagePreview(null);
     };
 
     return (
