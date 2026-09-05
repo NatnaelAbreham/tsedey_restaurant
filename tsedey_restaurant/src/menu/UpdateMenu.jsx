@@ -14,7 +14,9 @@ const UpdateMenu = () => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-
+    const [newImage, setNewImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [imageUploading, setImageUploading] = useState(false);
     // Load all menu items
     const fetchItems = async () => {
         try {
