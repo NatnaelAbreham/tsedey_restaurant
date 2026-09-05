@@ -461,6 +461,73 @@ const UpdateMenu = () => {
                                             }`}
                                     />
                                 </div>
+                                {/* Image Upload */}
+                                <div className="mt-6">
+                                    <label className="block text-sm font-medium mb-3">
+                                        Menu Image
+                                    </label>
+
+                                    <div
+                                        className={`p-4 rounded-xl border ${darkMode
+                                                ? "bg-gray-800 border-gray-700"
+                                                : "bg-gray-50 border-gray-200"
+                                            }`}
+                                    >
+                                        <div className="flex flex-col md:flex-row gap-5 md:items-center">
+
+                                            {/* Image Preview */}
+                                            <div className="w-32 h-32 rounded-xl overflow-hidden border">
+                                                {imagePreview ? (
+                                                    <img
+                                                        src={imagePreview}
+                                                        alt="New preview"
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : selectedItem.imageUrl ? (
+                                                    <img
+                                                        src={selectedItem.imageUrl}
+                                                        alt={selectedItem.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div
+                                                        className={`w-full h-full flex items-center justify-center ${darkMode
+                                                                ? "bg-gray-700 text-gray-400"
+                                                                : "bg-gray-100 text-gray-500"
+                                                            }`}
+                                                    >
+                                                        No Image
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div className="flex-1">
+                                                <input
+                                                    type="file"
+                                                    accept=".jpg,.jpeg,.png,.webp"
+                                                    onChange={handleImageChange}
+                                                    className={`w-full rounded-lg border p-3 ${darkMode
+                                                            ? "bg-gray-900 border-gray-700 text-white"
+                                                            : "bg-white border-gray-300"
+                                                        }`}
+                                                />
+
+                                                <p className="text-xs text-gray-500 mt-2">
+                                                    JPG, JPEG, PNG or WEBP. Maximum size 5MB.
+                                                </p>
+
+                                                {newImage && (
+                                                    <p className="text-sm mt-2">
+                                                        Selected:{" "}
+                                                        <span className="font-medium">
+                                                            {newImage.name}
+                                                        </span>
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 {/* Current Inventory */}
                                 <div
