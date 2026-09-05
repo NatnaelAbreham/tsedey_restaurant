@@ -163,7 +163,44 @@ const UpdateMenu = () => {
         setNewImage(null);
         setImagePreview(null);
     };
+    const handleImageChange = (e) => {
+        const file = e.target.files?.[0];
 
+        if (!file) return;
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/webp",
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+            showToast(
+                "Only JPG, JPEG, PNG and WEBP images are allowed.",
+                "error"
+            );
+
+            e.target.value = "";
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            showToast(
+                "Image size must be less than 5MB.",
+                "error"
+            );
+
+            e.target.value = "";
+            return;
+        }
+
+        setNewImage(file);
+
+        const previewUrl = URL.createObjectURL(file);
+
+        setImagePreview(previewUrl);
+    };
     return (
         <div
             className={`min-h-screen p-6 transition-colors duration-300 ${darkMode
