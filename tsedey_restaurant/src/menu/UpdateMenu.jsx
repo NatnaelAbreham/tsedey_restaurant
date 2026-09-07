@@ -554,7 +554,7 @@ const UpdateMenu = () => {
                                                     />
                                                 ) : selectedItem.imageUrl ? (
                                                     <img
-                                                        src={selectedItem.imageUrl}
+                                                        src={`http://localhost:5238/${selectedItem.imageUrl}`}
                                                         alt={selectedItem.name}
                                                         className="w-full h-full object-cover"
                                                     />
@@ -597,6 +597,20 @@ const UpdateMenu = () => {
                                         </div>
                                     </div>
                                 </div>
+                                {newImage && (
+                                    <div className="mt-4">
+                                        <button
+                                            type="button"
+                                            onClick={handleUpdateImage}
+                                            disabled={imageUploading}
+                                            className="px-5 py-2.5 rounded-lg bg-green-500 hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium transition"
+                                        >
+                                            {imageUploading
+                                                ? "Uploading..."
+                                                : "Update Image"}
+                                        </button>
+                                    </div>
+                                )}
 
                                 {/* Current Inventory */}
                                 <div
