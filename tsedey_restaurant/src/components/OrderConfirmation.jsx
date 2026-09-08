@@ -320,6 +320,14 @@ const OrderConfirmation = ({
                             : "Send OTP"}
                     </button>
                 )}
+                {otpError && !isVerified && (
+                    <p
+                        className="mt-2 text-sm text-center"
+                        style={{ color: "red" }}
+                    >
+                        {otpError}
+                    </p>
+                )}
 
                 {/* OTP SECTION */}
                 {otpSent && !isVerified && (
@@ -347,14 +355,14 @@ const OrderConfirmation = ({
                             className="w-full rounded-xl border px-4 py-3"
                         />
 
-                        {otpError && (
+                        {/* {otpError && (
                             <p
                                 className="mt-2 text-sm"
                                 style={{ color: "red" }}
                             >
                                 {otpError}
                             </p>
-                        )}
+                        )} */}
 
                         <button
                             onClick={handleVerifyOtp}

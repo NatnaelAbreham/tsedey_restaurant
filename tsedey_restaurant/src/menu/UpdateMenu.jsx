@@ -554,7 +554,7 @@ const UpdateMenu = () => {
                                                     />
                                                 ) : selectedItem.imageUrl ? (
                                                     <img
-                                                        src={`http://localhost:5238/${selectedItem.imageUrl}`}
+                                                        src={`https://localhost:5238/${selectedItem.imageUrl}`}
                                                         alt={selectedItem.name}
                                                         className="w-full h-full object-cover"
                                                     />
