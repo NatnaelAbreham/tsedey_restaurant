@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import api from "../api/api";
 
 const InventoryPage = () => {
     const { darkMode } = useTheme();
@@ -17,8 +17,8 @@ const InventoryPage = () => {
 
     const loadItems = async () => {
         try {
-            const response = await fetch("http://10.13.10.21:8687/getitem");
-            const data = await response.json();
+            const response = await api.get("/getitem");
+            const data = response.data;
 
             setItems(
                 data.data.map((item) => ({
@@ -60,20 +60,11 @@ const InventoryPage = () => {
         try {
             setSavingId(item.id);
 
-            const response = await fetch(
-                "http://10.13.10.21:8687/addquantity",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        itemId: item.id,
-                        quantity: Number(item.quantity),
-                        quantity_limit: Boolean(item.quantity_limit),
-                    }),
-                }
-            );
+            const response = await api.post("/addquantity", {
+                itemId: item.id,
+                quantity: Number(item.quantity),
+                quantity_limit: Boolean(item.quantity_limit),
+            });
 
             const data = await response.json();
 
