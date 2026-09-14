@@ -17,7 +17,7 @@ const InventoryPage = () => {
 
     const loadItems = async () => {
         try {
-            const response = await fetch("https://localhost:5238/getitem");
+            const response = await fetch("http://10.13.10.21:8687/getitem");
             const data = await response.json();
 
             setItems(
@@ -61,7 +61,7 @@ const InventoryPage = () => {
             setSavingId(item.id);
 
             const response = await fetch(
-                "https://localhost:5238/addquantity",
+                "http://10.13.10.21:8687/addquantity",
                 {
                     method: "POST",
                     headers: {
@@ -162,7 +162,7 @@ const InventoryPage = () => {
                                             {/* IMAGE */}
                                             <td className="px-6 py-5">
                                                 <img
-                                                    src={`https://localhost:5238/${item.imageUrl}`}
+                                                    src={`/uploads/${item.imageUrl}`}
                                                     alt={item.name}
                                                     className="w-16 h-16 rounded-xl object-cover"
                                                 />
