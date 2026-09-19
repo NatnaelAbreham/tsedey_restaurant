@@ -16,6 +16,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
+
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);

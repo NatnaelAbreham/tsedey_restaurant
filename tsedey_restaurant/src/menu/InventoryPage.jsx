@@ -153,7 +153,7 @@ const InventoryPage = () => {
                                             {/* IMAGE */}
                                             <td className="px-6 py-5">
                                                 <img
-                                                    src={`/uploads/${item.imageUrl}`}
+                                                    src={`/uploads/${item.imageUrl.replace("itemimage/", "")}`}
                                                     alt={item.name}
                                                     className="w-16 h-16 rounded-xl object-cover"
                                                 />
