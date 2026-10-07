@@ -5,11 +5,20 @@ const api = axios.create({
     withCredentials: true,
 });
 
-export default api; */
-import axios from "axios";
+export default api; 
+
+for IIs deployemnt
 
 const api = axios.create({
     baseURL: "/api",
+    withCredentials: true,
+});
+   
+*/
+import axios from "axios";
+
+const api = axios.create({
+    baseURL: "https://localhost:5238/api",
     withCredentials: true,
 });
 

@@ -56,6 +56,7 @@ const InventoryPage = () => {
         );
     };
 
+
     const saveQuantity = async (item) => {
         try {
             setSavingId(item.id);
@@ -66,20 +67,27 @@ const InventoryPage = () => {
                 quantity_limit: Boolean(item.quantity_limit),
             });
 
-            const data = await response.json();
+            const data = response.data;
 
-            if (!response.ok) {
-                throw new Error(data.message || "Failed to add quantity");
-            }
+            toast.success(data.message || "Stock updated successfully");
 
-            toast.success("Stock updated successfully ");
         } catch (error) {
             console.error(error);
-            toast.error(error.message || "Failed to update stock");
+
+            const message =
+                error.response?.data?.message ||
+                error.response?.data ||
+                error.message ||
+                "Failed to update stock";
+
+            toast.error(message);
+
         } finally {
             setSavingId(null);
         }
     };
+
+
 
     if (loading) {
         return (
