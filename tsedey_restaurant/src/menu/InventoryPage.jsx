@@ -74,6 +74,7 @@ const InventoryPage = () => {
                 itemId: item.id,
                 quantity: Number(item.quantity),
                 quantity_limit: Boolean(item.quantity_limit),
+                isAvailable: Boolean(item.isAvailable),
             });
 
             const data = response.data;
@@ -190,7 +191,7 @@ const InventoryPage = () => {
                                                 ETB {item.price}
                                             </td>
 
-                                            {/* AVAILABILITY */}
+
                                             {/* AVAILABILITY */}
                                             <td className="px-6 py-5 text-center">
                                                 <div className="flex items-center justify-center gap-3">
