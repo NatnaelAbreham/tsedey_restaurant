@@ -137,6 +137,9 @@ const Navbar = () => {
           <Link to="/dashboard" className={linkClass("/dashboard")}>
             Dashboard
           </Link>
+             <Link to="/menuschedule" className={linkClass("/menuschedule")}>
+            Schedule
+          </Link>
         </div>
 
         {/* Actions */}
