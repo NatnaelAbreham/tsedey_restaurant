@@ -12,6 +12,7 @@ import UpdateMenu from "../menu/UpdateMenu.jsx";
 import InventoryPage from "../menu/InventoryPage.jsx";
 import Profile from "../pages/Profile";
 import ProtectedRoute from "../components/ProtectedRoute";
+import MenuSchedule from "../components/MenuSchedule.jsx";
 
 const AppRoutes = () => {
   return (
@@ -36,6 +37,7 @@ const AppRoutes = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/report" element={<Report />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/menuschedule" element={<MenuSchedule />} />
       </Route>
 
     </Routes>
