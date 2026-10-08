@@ -56,6 +56,15 @@ const InventoryPage = () => {
         );
     };
 
+    const handleAvailabilityChange = (id, value) => {
+        setItems(prevItems =>
+            prevItems.map(item =>
+                item.id === id
+                    ? { ...item, isAvailable: value }
+                    : item
+            )
+        );
+    };
 
     const saveQuantity = async (item) => {
         try {
@@ -133,6 +142,7 @@ const InventoryPage = () => {
                                         <th className="px-6 py-4 text-left">Image</th>
                                         <th className="px-6 py-4 text-left">Item</th>
                                         <th className="px-6 py-4 text-left">Price</th>
+                                        <th className="px-6 py-4 text-center">Availability</th>
                                         <th className="px-6 py-4 text-center">Quantity Limit</th>
                                         <th className="px-6 py-4 text-left">Quantity</th>
                                         <th className="px-6 py-4 text-center">Action</th>
@@ -179,6 +189,62 @@ const InventoryPage = () => {
                                             <td className="px-6 py-5 font-semibold text-orange-500">
                                                 ETB {item.price}
                                             </td>
+
+                                            {/* AVAILABILITY */}
+                                            {/* AVAILABILITY */}
+                                            <td className="px-6 py-5 text-center">
+                                                <div className="flex items-center justify-center gap-3">
+
+                                                    <label className="relative inline-flex items-center cursor-pointer">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="sr-only peer"
+                                                            checked={item.isAvailable}
+                                                            onChange={(e) =>
+                                                                handleAvailabilityChange(
+                                                                    item.id,
+                                                                    e.target.checked
+                                                                )
+                                                            }
+                                                        />
+
+                                                        <div
+                                                            className="
+                    w-11 h-6
+                    bg-gray-300
+                    rounded-full
+                    peer
+                    peer-checked:bg-green-500
+                    after:content-['']
+                    after:absolute
+                    after:top-[2px]
+                    after:left-[2px]
+                    after:bg-white
+                    after:border
+                    after:rounded-full
+                    after:h-5
+                    after:w-5
+                    after:transition-all
+                    peer-checked:after:translate-x-full
+                "
+                                                        >
+                                                        </div>
+                                                    </label>
+
+                                                    <span
+                                                        className={`text-sm font-semibold ${item.isAvailable
+                                                            ? "text-green-500"
+                                                            : darkMode
+                                                                ? "text-gray-400"
+                                                                : "text-gray-500"
+                                                            }`}
+                                                    >
+                                                        {item.isAvailable ? "Available" : "Out of Stock"}
+                                                    </span>
+
+                                                </div>
+                                            </td>
+                                            {/* QUANTITY LIMIT */}
                                             <td className="px-6 py-5 text-center">
                                                 <label className="relative inline-flex items-center cursor-pointer">
                                                     <input
