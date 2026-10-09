@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import api from "../api/axios";
+import api from "../api/api";
 
 const days = [
   "Monday",
@@ -34,7 +34,7 @@ export default function MenuSchedule() {
 
   const loadSchedule = async () => {
     try {
-      const response = await api.get("/MenuSchedule");
+      const response = await api.get("/menuschedule");
 
       if (response.data?.data?.length > 0) {
         const saved = response.data.data;
@@ -88,7 +88,7 @@ export default function MenuSchedule() {
     try {
       setSaving(true);
 
-      await api.post("/MenuSchedule", {
+      await api.post("/menuschedule", {
         days: schedule,
       });
 
