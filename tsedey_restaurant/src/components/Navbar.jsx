@@ -14,8 +14,27 @@ import {
   FaUserCircle,
   FaUser,
   FaSignOutAlt,
+  FaUtensils,
+  FaPlus,
+  FaEdit,
+  FaBoxes,
+  FaClipboardList,
+  FaChartBar,
+  FaTachometerAlt,
+  FaCalendarAlt,
+  FaChevronDown,
 } from "react-icons/fa";
 
+const navItems = [
+  { label: "Menu", path: "/menu", icon: FaUtensils },
+  { label: "Add Item", path: "/addmenu", icon: FaPlus },
+  { label: "Update", path: "/updatemenu", icon: FaEdit },
+  { label: "Inventory", path: "/addquantity", icon: FaBoxes },
+  { label: "Orders", path: "/ordermanagement", icon: FaClipboardList },
+  { label: "Reports", path: "/report", icon: FaChartBar },
+  { label: "Dashboard", path: "/dashboard", icon: FaTachometerAlt },
+  { label: "Schedule", path: "/menuschedule", icon: FaCalendarAlt },
+];
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -32,22 +51,29 @@ const Navbar = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  const linkClass = (path) => {
+  const surface = darkMode
+    ? "bg-gray-950 text-white border-gray-800"
+    : "bg-white text-gray-900 border-gray-200";
+
+  const mutedText = darkMode ? "text-gray-400" : "text-gray-500";
+
+  const navLinkClass = (path) => {
     const active = isActive(path);
 
-    return `
-      relative px-3 py-2 rounded-full text-sm font-medium transition-all duration-300
-      ${
-        active
-          ? "bg-orange-500 text-white shadow-md shadow-orange-500/30"
-          : darkMode
-            ? "text-gray-300 hover:text-white hover:bg-gray-800"
-            : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-      }
-    `;
+    return `group flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-all duration-200 ${
+      active
+        ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
+        : darkMode
+        ? "text-gray-300 hover:bg-gray-800 hover:text-white"
+        : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
+    }`;
   };
 
-  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    setMobileOpen(false);
+    setProfileOpen(false);
+  }, [location.pathname]);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -58,10 +84,19 @@ const Navbar = () => {
       }
     };
 
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setProfileOpen(false);
+        setMobileOpen(false);
+      }
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, []);
 
@@ -70,316 +105,270 @@ const Navbar = () => {
       await logout();
       setProfileOpen(false);
       setMobileOpen(false);
-
       navigate("/login", { replace: true });
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
 
+  const renderNavLinks = (mobile = false) =>
+    navItems.map(({ label, path, icon: Icon }) => (
+      <Link
+        key={path}
+        to={path}
+        onClick={() => {
+          if (mobile) setMobileOpen(false);
+        }}
+        className={
+          mobile
+            ? `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
+                isActive(path)
+                  ? "bg-orange-500 text-white"
+                  : darkMode
+                  ? "text-gray-300 hover:bg-gray-800"
+                  : "text-gray-700 hover:bg-orange-50 hover:text-orange-600"
+              }`
+            : navLinkClass(path)
+        }
+      >
+        <Icon className="shrink-0 text-base" />
+        <span>{label}</span>
+      </Link>
+    ));
+
   return (
     <nav
-      className={`sticky top-0 z-50 backdrop-blur-lg border-b transition-all duration-300 ${
-        darkMode
-          ? "bg-gray-900/80 border-gray-800 text-white"
-          : "bg-white/80 border-gray-200 text-gray-900"
-      }`}
+      className={`sticky top-0 z-50 border-b backdrop-blur-xl transition-colors duration-300 ${surface}`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-
-        {/* Logo */}
+      {/* Main navbar */}
+      <div className="mx-auto flex min-h-[76px] max-w-[1600px] items-center justify-between gap-4 px-4 sm:px-6 xl:px-8">
+        {/* Brand */}
         <Link
           to="/"
-          className="text-xl font-extrabold tracking-tight"
-          onClick={() => setMobileOpen(false)}
+          className="group flex shrink-0 items-center gap-3"
+          aria-label="Tsedey Restaurant home"
         >
-          Tsedey<span className="text-orange-500">Restaurant</span>
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-lg shadow-orange-500/20 transition-transform duration-300 group-hover:rotate-3 group-hover:scale-105">
+            <FaUtensils className="text-xl" />
+          </div>
+
+          <div className="leading-tight">
+            <div className="text-lg font-extrabold tracking-tight sm:text-xl">
+              Tsedey
+              <span className="text-orange-500"> Restaurant</span>
+            </div>
+            <p
+              className={`mt-1 text-[10px] font-semibold uppercase tracking-[0.19em] ${mutedText}`}
+            >
+              Restaurant Management
+            </p>
+          </div>
         </Link>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-
-         {/*  <Link to="/" className={linkClass("/")}>
-            Home
-          </Link> */}
-
-          <Link to="/menu" className={linkClass("/menu")}>
-            Menu
-          </Link>
-
-          <Link to="/addmenu" className={linkClass("/addmenu")}>
-            Add
-          </Link>
-
-          <Link to="/updatemenu" className={linkClass("/updatemenu")}>
-            Update
-          </Link>
-
-          <Link to="/addquantity" className={linkClass("/addquantity")}>
-            Quantity
-          </Link>
-
-          <Link
-            to="/ordermanagement"
-            className={linkClass("/ordermanagement")}
-          >
-            Order
-          </Link>
-
-         {/*  <Link to="/contact" className={linkClass("/contact")}>
-            Contact
-          </Link> */}
-
-          <Link to="/report" className={linkClass("/report")}>
-            Report
-          </Link>
-
-          <Link to="/dashboard" className={linkClass("/dashboard")}>
-            Dashboard
-          </Link>
-             <Link to="/menuschedule" className={linkClass("/menuschedule")}>
-            Schedule
-          </Link>
+        {/* Desktop navigation */}
+        <div className="hidden items-center gap-1 xl:flex">
+          {renderNavLinks()}
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-3">
-
-          {/* Dark mode */}
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
+          {/* Theme toggle */}
           <button
             onClick={toggleDarkMode}
-            className="hidden md:flex items-center justify-center w-11 h-11 rounded-full
-              bg-white/10 backdrop-blur-md border border-white/20
-              hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg"
-            aria-label="Toggle theme"
+            className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-200 hover:scale-105 ${
+              darkMode
+                ? "border-gray-700 bg-gray-900 text-yellow-400 hover:bg-gray-800"
+                : "border-gray-200 bg-gray-50 text-gray-700 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-600"
+            }`}
+            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+            title={darkMode ? "Light mode" : "Dark mode"}
           >
-            <div
-              className={`transition-all duration-500 ${
-                darkMode
-                  ? "rotate-180 text-yellow-400"
-                  : "text-gray-800"
-              }`}
-            >
-              {darkMode ? (
-                <FaSun className="text-lg" />
-              ) : (
-                <FaMoon className="text-lg" />
-              )}
-            </div>
+            {darkMode ? (
+              <FaSun className="text-lg" />
+            ) : (
+              <FaMoon className="text-base" />
+            )}
           </button>
 
           {/* Cart */}
           <button
             onClick={() => setIsCartOpen(true)}
-            className="relative flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full transition shadow-md"
+            className="relative flex h-10 items-center justify-center gap-2 rounded-xl bg-orange-500 px-3.5 font-semibold text-white shadow-md shadow-orange-500/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-orange-600 active:translate-y-0 sm:px-4"
+            aria-label={`Open cart, ${totalItems} items`}
           >
-            <FaShoppingCart />
-
-            <span className="hidden sm:inline">
-              Cart
-            </span>
+            <FaShoppingCart className="text-base" />
+            <span className="hidden text-sm sm:inline">Cart</span>
 
             {totalItems > 0 && (
-              <span
-                className="absolute -top-2 -right-2 min-w-5 h-5 px-1
-                  flex items-center justify-center text-xs font-bold
-                  text-white rounded-full bg-gradient-to-br
-                  from-orange-400 to-red-500 shadow-[0_0_12px_rgba(255,100,0,0.6)]
-                  animate-bounce"
-              >
-                {totalItems}
+              <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-red-500 px-1 text-[10px] font-bold text-white">
+                {totalItems > 99 ? "99+" : totalItems}
               </span>
             )}
           </button>
 
-          {/* Profile */}
+          {/* Profile dropdown */}
           <div className="relative hidden md:block" ref={profileRef}>
-
             <button
-              onClick={() => setProfileOpen(!profileOpen)}
-              className={`w-11 h-11 rounded-full flex items-center justify-center
-                transition-all duration-300
-                ${
-                  darkMode
-                    ? "bg-gray-800 text-gray-200 hover:bg-gray-700"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              aria-label="Profile menu"
+              onClick={() => setProfileOpen((previous) => !previous)}
+              aria-expanded={profileOpen}
+              aria-label="Open profile menu"
+              className={`flex h-10 items-center gap-2 rounded-xl border px-2.5 transition ${
+                profileOpen
+                  ? "border-orange-400 bg-orange-50 text-orange-600"
+                  : darkMode
+                  ? "border-gray-800 bg-gray-900 text-gray-200 hover:bg-gray-800"
+                  : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+              }`}
             >
-              <FaUserCircle className="text-2xl" />
+              <FaUserCircle className="text-2xl text-orange-500" />
+              <span className="hidden max-w-24 truncate text-sm font-semibold lg:block">
+                {user?.fullName?.split(" ")[0] || "Account"}
+              </span>
+              <FaChevronDown
+                className={`hidden text-[10px] transition-transform lg:block ${
+                  profileOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
 
-            {/* Dropdown */}
             {profileOpen && (
               <div
-                className={`absolute right-0 mt-3 w-64 rounded-2xl
-                  border shadow-xl overflow-hidden z-50
-                  ${
-                    darkMode
-                      ? "bg-gray-900 border-gray-700"
-                      : "bg-white border-gray-200"
-                  }`}
+                className={`absolute right-0 top-full mt-3 w-72 overflow-hidden rounded-2xl border shadow-2xl ${
+                  darkMode
+                    ? "border-gray-800 bg-gray-900"
+                    : "border-gray-200 bg-white"
+                }`}
               >
-
-                {/* User information */}
                 <div
-                  className={`px-5 py-4 border-b ${
-                    darkMode
-                      ? "border-gray-700"
-                      : "border-gray-100"
+                  className={`border-b p-5 ${
+                    darkMode ? "border-gray-800" : "border-gray-100"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-
-                    <div className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center">
-                      <FaUser />
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-md shadow-orange-500/20">
+                      <FaUser className="text-xl" />
                     </div>
 
                     <div className="min-w-0">
-                      <p
-                        className={`font-semibold truncate ${
-                          darkMode
-                            ? "text-white"
-                            : "text-gray-900"
-                        }`}
-                      >
+                      <p className="truncate font-bold">
                         {user?.fullName || "User"}
                       </p>
-
-                      <p
-                        className={`text-xs truncate ${
-                          darkMode
-                            ? "text-gray-400"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        {user?.email || ""}
+                      <p className={`mt-1 truncate text-xs ${mutedText}`}>
+                        {user?.email || "Signed in"}
                       </p>
                     </div>
-
                   </div>
                 </div>
 
-                {/* Profile */}
-                <button
-                  onClick={() => {
-                    setProfileOpen(false);
-                    navigate("/profile");
-                  }}
-                  className={`w-full flex items-center gap-3 px-5 py-3 text-sm transition ${
-                    darkMode
-                      ? "text-gray-300 hover:bg-gray-800 hover:text-white"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  <FaUser />
-                  <span>Profile</span>
-                </button>
+                <div className="p-2">
+                  <button
+                    onClick={() => {
+                      setProfileOpen(false);
+                      navigate("/profile");
+                    }}
+                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
+                      darkMode
+                        ? "text-gray-300 hover:bg-gray-800 hover:text-white"
+                        : "text-gray-700 hover:bg-orange-50 hover:text-orange-600"
+                    }`}
+                  >
+                    <FaUser />
+                    My Profile
+                  </button>
 
-                {/* Logout */}
-                <button
-                  onClick={handleLogout}
-                  className={`w-full flex items-center gap-3 px-5 py-3 text-sm transition border-t ${
-                    darkMode
-                      ? "border-gray-700 text-red-400 hover:bg-gray-800"
-                      : "border-gray-100 text-red-500 hover:bg-red-50"
-                  }`}
-                >
-                  <FaSignOutAlt />
-                  <span>Logout</span>
-                </button>
-
+                  <button
+                    onClick={handleLogout}
+                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
+                      darkMode
+                        ? "text-red-400 hover:bg-red-500/10"
+                        : "text-red-500 hover:bg-red-50"
+                    }`}
+                  >
+                    <FaSignOutAlt />
+                    Sign Out
+                  </button>
+                </div>
               </div>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile/tablet menu button */}
           <button
-            className="md:hidden p-2"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+            className={`flex h-10 w-10 items-center justify-center rounded-xl border transition xl:hidden ${
+              darkMode
+                ? "border-gray-800 bg-gray-900 text-white hover:bg-gray-800"
+                : "border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
+            }`}
+            onClick={() => setMobileOpen((previous) => !previous)}
+            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileOpen}
           >
-            {mobileOpen ? <FaTimes /> : <FaBars />}
+            {mobileOpen ? (
+              <FaTimes className="text-lg" />
+            ) : (
+              <FaBars className="text-lg" />
+            )}
           </button>
-
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile/tablet navigation drawer */}
       {mobileOpen && (
         <div
-          className={`md:hidden px-6 pb-4 pt-2 space-y-4 text-sm font-medium border-t ${
+          className={`border-t xl:hidden ${
             darkMode
-              ? "bg-gray-900 border-gray-800"
-              : "bg-white border-gray-200"
+              ? "border-gray-800 bg-gray-950"
+              : "border-gray-100 bg-white"
           }`}
         >
+          <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
+            <div className="mb-4">
+              <p
+                className={`px-1 text-[11px] font-bold uppercase tracking-[0.2em] ${mutedText}`}
+              >
+                Navigation
+              </p>
+            </div>
 
-          <Link
-            to="/"
-            className={`block ${linkClass("/")}`}
-            onClick={() => setMobileOpen(false)}
-          >
-            Home
-          </Link>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {renderNavLinks(true)}
+            </div>
 
-          <Link
-            to="/menu"
-            className={`block ${linkClass("/menu")}`}
-            onClick={() => setMobileOpen(false)}
-          >
-            Menu
-          </Link>
+            {/* Mobile profile */}
+            <div
+              className={`mt-5 flex items-center justify-between gap-3 border-t pt-5 ${
+                darkMode ? "border-gray-800" : "border-gray-100"
+              }`}
+            >
+              <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  navigate("/profile");
+                }}
+                className="flex min-w-0 items-center gap-3 text-left"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500 text-white">
+                  <FaUser />
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold">
+                    {user?.fullName || "My Profile"}
+                  </p>
+                  <p className={`truncate text-xs ${mutedText}`}>
+                    {user?.email || "Manage your account"}
+                  </p>
+                </div>
+              </button>
 
-          <Link
-            to="/contact"
-            className={`block ${linkClass("/contact")}`}
-            onClick={() => setMobileOpen(false)}
-          >
-            Contact
-          </Link>
-
-          {/* Profile */}
-          <button
-            onClick={() => {
-              setMobileOpen(false);
-              navigate("/profile");
-            }}
-            className={`w-full flex items-center gap-3 py-2 ${
-              darkMode
-                ? "text-gray-300"
-                : "text-gray-700"
-            }`}
-          >
-            <FaUser />
-            <span>Profile</span>
-          </button>
-
-          {/* Logout */}
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 py-2 text-red-500"
-          >
-            <FaSignOutAlt />
-            <span>Logout</span>
-          </button>
-
-          {/* Dark Mode */}
-          <button
-            onClick={() => {
-              toggleDarkMode();
-              setMobileOpen(false);
-            }}
-            className={`w-full flex items-center gap-3 py-2 ${
-              darkMode ? "text-yellow-400" : ""
-            }`}
-          >
-            {darkMode ? <FaSun /> : <FaMoon />}
-            <span>
-              {darkMode ? "Light Mode" : "Dark Mode"}
-            </span>
-          </button>
-
+              <button
+                onClick={handleLogout}
+                className="flex shrink-0 items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold text-red-500 transition hover:bg-red-50 dark:hover:bg-red-500/10"
+              >
+                <FaSignOutAlt />
+                Logout
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </nav>
@@ -387,5 +376,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
