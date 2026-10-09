@@ -32,6 +32,7 @@ export default function MenuSchedule() {
     loadSchedule();
   }, []);
 
+
   const loadSchedule = async () => {
     try {
       const response = await api.get("/menuschedule");
@@ -40,31 +41,42 @@ export default function MenuSchedule() {
         const saved = response.data.data;
 
         const formatted = days.map((day) => {
-          const existing = saved.find(
-            (x) =>
-              x.dayOfWeek?.toLowerCase() === day.toLowerCase()
-          );
+          const existing = saved.find((x) => {
+            const savedDay =
+              typeof x.dayOfWeek === "number"
+                ? [
+                  "Sunday",
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                ][x.dayOfWeek]
+                : String(x.dayOfWeek ?? "");
+
+            return savedDay.toLowerCase() === day.toLowerCase();
+          });
 
           return existing
             ? {
-                dayOfWeek: day,
-                startTime: existing.startTime?.substring(0, 5) || "08:00",
-                endTime: existing.endTime?.substring(0, 5) || "22:00",
-                isEnabled: existing.isEnabled,
-              }
+              dayOfWeek: day,
+              startTime: String(existing.startTime ?? "08:00").substring(0, 5),
+              endTime: String(existing.endTime ?? "22:00").substring(0, 5),
+              isEnabled: existing.isEnabled,
+            }
             : {
-                dayOfWeek: day,
-                startTime: "08:00",
-                endTime: "22:00",
-                isEnabled: false,
-              };
+              dayOfWeek: day,
+              startTime: "08:00",
+              endTime: "22:00",
+              isEnabled: false,
+            };
         });
 
         setSchedule(formatted);
       }
     } catch (error) {
-      console.error(error);
-
+      console.error("Failed to load menu schedule:", error);
       toast.error("Failed to load menu schedule.");
     } finally {
       setLoading(false);
@@ -76,9 +88,9 @@ export default function MenuSchedule() {
       prev.map((day, i) =>
         i === index
           ? {
-              ...day,
-              [field]: value,
-            }
+            ...day,
+            [field]: value,
+          }
           : day
       )
     );
@@ -98,7 +110,7 @@ export default function MenuSchedule() {
 
       toast.error(
         error.response?.data?.message ||
-          "Failed to save menu schedule."
+        "Failed to save menu schedule."
       );
     } finally {
       setSaving(false);
@@ -108,11 +120,10 @@ export default function MenuSchedule() {
   if (loading) {
     return (
       <div
-        className={`min-h-screen flex items-center justify-center ${
-          darkMode
+        className={`min-h-screen flex items-center justify-center ${darkMode
             ? "bg-gray-950 text-white"
             : "bg-[#e7f2fd] text-gray-900"
-        }`}
+          }`}
       >
         Loading schedule...
       </div>
@@ -121,11 +132,10 @@ export default function MenuSchedule() {
 
   return (
     <div
-      className={`min-h-screen p-6 md:p-10 ${
-        darkMode
+      className={`min-h-screen p-6 md:p-10 ${darkMode
           ? "bg-gray-950 text-white"
           : "bg-[#e7f2fd] text-gray-900"
-      }`}
+        }`}
     >
       <ToastContainer />
 
@@ -138,11 +148,10 @@ export default function MenuSchedule() {
           </h1>
 
           <p
-            className={`mt-2 ${
-              darkMode
+            className={`mt-2 ${darkMode
                 ? "text-gray-400"
                 : "text-gray-600"
-            }`}
+              }`}
           >
             Control when customers can view and order from
             your restaurant menu.
@@ -151,20 +160,18 @@ export default function MenuSchedule() {
 
         {/* Card */}
         <div
-          className={`rounded-2xl shadow-xl overflow-hidden ${
-            darkMode
+          className={`rounded-2xl shadow-xl overflow-hidden ${darkMode
               ? "bg-gray-900 border border-gray-800"
               : "bg-white"
-          }`}
+            }`}
         >
 
           {/* Status */}
           <div
-            className={`px-6 py-5 border-b ${
-              darkMode
+            className={`px-6 py-5 border-b ${darkMode
                 ? "border-gray-800"
                 : "border-gray-200"
-            }`}
+              }`}
           >
             <div className="flex items-center gap-3">
 
@@ -189,11 +196,10 @@ export default function MenuSchedule() {
               {schedule.map((day, index) => (
                 <div
                   key={day.dayOfWeek}
-                  className={`grid grid-cols-1 md:grid-cols-4 gap-4 items-center p-4 rounded-xl ${
-                    darkMode
+                  className={`grid grid-cols-1 md:grid-cols-4 gap-4 items-center p-4 rounded-xl ${darkMode
                       ? "bg-gray-800"
                       : "bg-gray-50"
-                  }`}
+                    }`}
                 >
 
                   {/* Day */}
@@ -204,11 +210,10 @@ export default function MenuSchedule() {
                   {/* Start */}
                   <div>
                     <label
-                      className={`block text-xs mb-1 ${
-                        darkMode
+                      className={`block text-xs mb-1 ${darkMode
                           ? "text-gray-400"
                           : "text-gray-500"
-                      }`}
+                        }`}
                     >
                       Opens
                     </label>
@@ -224,22 +229,20 @@ export default function MenuSchedule() {
                           e.target.value
                         )
                       }
-                      className={`w-full px-3 py-2 rounded-lg border outline-none ${
-                        darkMode
+                      className={`w-full px-3 py-2 rounded-lg border outline-none ${darkMode
                           ? "bg-gray-900 border-gray-700 text-white"
                           : "bg-white border-gray-300"
-                      }`}
+                        }`}
                     />
                   </div>
 
                   {/* End */}
                   <div>
                     <label
-                      className={`block text-xs mb-1 ${
-                        darkMode
+                      className={`block text-xs mb-1 ${darkMode
                           ? "text-gray-400"
                           : "text-gray-500"
-                      }`}
+                        }`}
                     >
                       Closes
                     </label>
@@ -255,11 +258,10 @@ export default function MenuSchedule() {
                           e.target.value
                         )
                       }
-                      className={`w-full px-3 py-2 rounded-lg border outline-none ${
-                        darkMode
+                      className={`w-full px-3 py-2 rounded-lg border outline-none ${darkMode
                           ? "bg-gray-900 border-gray-700 text-white"
                           : "bg-white border-gray-300"
-                      }`}
+                        }`}
                     />
                   </div>
 
@@ -267,11 +269,10 @@ export default function MenuSchedule() {
                   <div className="flex items-center justify-between md:justify-center gap-3">
 
                     <span
-                      className={`text-sm font-medium ${
-                        day.isEnabled
+                      className={`text-sm font-medium ${day.isEnabled
                           ? "text-green-500"
                           : "text-gray-500"
-                      }`}
+                        }`}
                     >
                       {day.isEnabled
                         ? "Enabled"

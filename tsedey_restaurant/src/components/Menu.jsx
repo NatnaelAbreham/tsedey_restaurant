@@ -19,7 +19,7 @@ const Menu = ({ limit }) => {
 
   const checkMenuStatus = useCallback(async () => {
     try {
-      const response = await api.get("/MenuSchedule/status");
+      const response = await api.get("/status");
       setMenuStatus(response.data);
       return response.data;
     } catch (error) {
