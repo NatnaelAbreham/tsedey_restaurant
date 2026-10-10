@@ -13,12 +13,18 @@ const api = axios.create({
     baseURL: "/api",
     withCredentials: true,
 });
-   
+  
+for localdevelopment
+const api = axios.create({
+    baseURL: "https://localhost:5238/api",
+    withCredentials: true,
+});  
 */
 import axios from "axios";
 
+
 const api = axios.create({
-    baseURL: "https://localhost:5238/api",
+    baseURL: "/api",
     withCredentials: true,
 });
 
