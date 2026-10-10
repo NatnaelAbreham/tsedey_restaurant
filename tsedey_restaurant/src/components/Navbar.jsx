@@ -124,13 +124,14 @@ const Navbar = () => {
         }}
         className={
           mobile
-            ? `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${isActive(path)
-              ? "bg-orange-500 text-white"
+            ? `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-300 ${isActive(path)
+              ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
               : darkMode
-                ? "text-gray-300 hover:bg-gray-800"
+                ? "text-gray-300 hover:bg-gray-800 hover:text-white"
                 : "text-gray-700 hover:bg-orange-50 hover:text-orange-600"
             }`
             : navLinkClass(path)
+
         }
       >
         <Icon className="shrink-0 text-base" />
@@ -173,8 +174,8 @@ const Navbar = () => {
         <div className="hidden items-center xl:flex">
           <div
             className={`flex items-center gap-1 rounded-full border p-1 ${darkMode
-                ? "border-gray-800 bg-gray-900"
-                : "border-gray-200 bg-gray-50"
+              ? "border-gray-800 bg-gray-900"
+              : "border-gray-200 bg-gray-50"
               }`}
           >
             {renderNavLinks()}
