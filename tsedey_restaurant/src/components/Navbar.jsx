@@ -60,14 +60,17 @@ const Navbar = () => {
   const navLinkClass = (path) => {
     const active = isActive(path);
 
-    return `group flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-all duration-200 ${
-      active
+    return `group relative flex items-center gap-2 whitespace-nowrap
+    rounded-full px-4 py-2.5 text-[13px] font-semibold
+    transition-all duration-300 ease-in-out
+    ${active
         ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
         : darkMode
-        ? "text-gray-300 hover:bg-gray-800 hover:text-white"
-        : "text-gray-600 hover:bg-orange-50 hover:text-orange-600"
-    }`;
+          ? "text-gray-300 hover:bg-gray-800 hover:text-white"
+          : "text-gray-600 hover:bg-white hover:text-orange-600 hover:shadow-sm"
+      }`;
   };
+
 
   useEffect(() => {
     setMobileOpen(false);
@@ -121,13 +124,12 @@ const Navbar = () => {
         }}
         className={
           mobile
-            ? `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
-                isActive(path)
-                  ? "bg-orange-500 text-white"
-                  : darkMode
-                  ? "text-gray-300 hover:bg-gray-800"
-                  : "text-gray-700 hover:bg-orange-50 hover:text-orange-600"
-              }`
+            ? `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${isActive(path)
+              ? "bg-orange-500 text-white"
+              : darkMode
+                ? "text-gray-300 hover:bg-gray-800"
+                : "text-gray-700 hover:bg-orange-50 hover:text-orange-600"
+            }`
             : navLinkClass(path)
         }
       >
@@ -166,20 +168,29 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop navigation */}
-        <div className="hidden items-center gap-1 xl:flex">
-          {renderNavLinks()}
+
+
+        <div className="hidden items-center xl:flex">
+          <div
+            className={`flex items-center gap-1 rounded-full border p-1 ${darkMode
+                ? "border-gray-800 bg-gray-900"
+                : "border-gray-200 bg-gray-50"
+              }`}
+          >
+            {renderNavLinks()}
+          </div>
         </div>
+
 
         {/* Actions */}
         <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
           {/* Theme toggle */}
           <button
             onClick={toggleDarkMode}
-            className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-200 hover:scale-105 ${
-              darkMode
-                ? "border-gray-700 bg-gray-900 text-yellow-400 hover:bg-gray-800"
-                : "border-gray-200 bg-gray-50 text-gray-700 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-600"
-            }`}
+            className={`flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-200 hover:scale-105 ${darkMode
+              ? "border-gray-700 bg-gray-900 text-yellow-400 hover:bg-gray-800"
+              : "border-gray-200 bg-gray-50 text-gray-700 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-600"
+              }`}
             aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
             title={darkMode ? "Light mode" : "Dark mode"}
           >
@@ -212,37 +223,33 @@ const Navbar = () => {
               onClick={() => setProfileOpen((previous) => !previous)}
               aria-expanded={profileOpen}
               aria-label="Open profile menu"
-              className={`flex h-10 items-center gap-2 rounded-xl border px-2.5 transition ${
-                profileOpen
-                  ? "border-orange-400 bg-orange-50 text-orange-600"
-                  : darkMode
+              className={`flex h-10 items-center gap-2 rounded-xl border px-2.5 transition ${profileOpen
+                ? "border-orange-400 bg-orange-50 text-orange-600"
+                : darkMode
                   ? "border-gray-800 bg-gray-900 text-gray-200 hover:bg-gray-800"
                   : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-              }`}
+                }`}
             >
               <FaUserCircle className="text-2xl text-orange-500" />
               <span className="hidden max-w-24 truncate text-sm font-semibold lg:block">
                 {user?.fullName?.split(" ")[0] || "Account"}
               </span>
               <FaChevronDown
-                className={`hidden text-[10px] transition-transform lg:block ${
-                  profileOpen ? "rotate-180" : ""
-                }`}
+                className={`hidden text-[10px] transition-transform lg:block ${profileOpen ? "rotate-180" : ""
+                  }`}
               />
             </button>
 
             {profileOpen && (
               <div
-                className={`absolute right-0 top-full mt-3 w-72 overflow-hidden rounded-2xl border shadow-2xl ${
-                  darkMode
-                    ? "border-gray-800 bg-gray-900"
-                    : "border-gray-200 bg-white"
-                }`}
+                className={`absolute right-0 top-full mt-3 w-72 overflow-hidden rounded-2xl border shadow-2xl ${darkMode
+                  ? "border-gray-800 bg-gray-900"
+                  : "border-gray-200 bg-white"
+                  }`}
               >
                 <div
-                  className={`border-b p-5 ${
-                    darkMode ? "border-gray-800" : "border-gray-100"
-                  }`}
+                  className={`border-b p-5 ${darkMode ? "border-gray-800" : "border-gray-100"
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-md shadow-orange-500/20">
@@ -266,11 +273,10 @@ const Navbar = () => {
                       setProfileOpen(false);
                       navigate("/profile");
                     }}
-                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
-                      darkMode
-                        ? "text-gray-300 hover:bg-gray-800 hover:text-white"
-                        : "text-gray-700 hover:bg-orange-50 hover:text-orange-600"
-                    }`}
+                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${darkMode
+                      ? "text-gray-300 hover:bg-gray-800 hover:text-white"
+                      : "text-gray-700 hover:bg-orange-50 hover:text-orange-600"
+                      }`}
                   >
                     <FaUser />
                     My Profile
@@ -278,11 +284,10 @@ const Navbar = () => {
 
                   <button
                     onClick={handleLogout}
-                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
-                      darkMode
-                        ? "text-red-400 hover:bg-red-500/10"
-                        : "text-red-500 hover:bg-red-50"
-                    }`}
+                    className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${darkMode
+                      ? "text-red-400 hover:bg-red-500/10"
+                      : "text-red-500 hover:bg-red-50"
+                      }`}
                   >
                     <FaSignOutAlt />
                     Sign Out
@@ -294,11 +299,10 @@ const Navbar = () => {
 
           {/* Mobile/tablet menu button */}
           <button
-            className={`flex h-10 w-10 items-center justify-center rounded-xl border transition xl:hidden ${
-              darkMode
-                ? "border-gray-800 bg-gray-900 text-white hover:bg-gray-800"
-                : "border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
-            }`}
+            className={`flex h-10 w-10 items-center justify-center rounded-xl border transition xl:hidden ${darkMode
+              ? "border-gray-800 bg-gray-900 text-white hover:bg-gray-800"
+              : "border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
+              }`}
             onClick={() => setMobileOpen((previous) => !previous)}
             aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={mobileOpen}
@@ -315,11 +319,10 @@ const Navbar = () => {
       {/* Mobile/tablet navigation drawer */}
       {mobileOpen && (
         <div
-          className={`border-t xl:hidden ${
-            darkMode
-              ? "border-gray-800 bg-gray-950"
-              : "border-gray-100 bg-white"
-          }`}
+          className={`border-t xl:hidden ${darkMode
+            ? "border-gray-800 bg-gray-950"
+            : "border-gray-100 bg-white"
+            }`}
         >
           <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
             <div className="mb-4">
@@ -336,9 +339,8 @@ const Navbar = () => {
 
             {/* Mobile profile */}
             <div
-              className={`mt-5 flex items-center justify-between gap-3 border-t pt-5 ${
-                darkMode ? "border-gray-800" : "border-gray-100"
-              }`}
+              className={`mt-5 flex items-center justify-between gap-3 border-t pt-5 ${darkMode ? "border-gray-800" : "border-gray-100"
+                }`}
             >
               <button
                 onClick={() => {
