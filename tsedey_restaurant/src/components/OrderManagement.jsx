@@ -395,7 +395,7 @@ const OrderManagement = () => {
                                         </span>
 
                                         <strong className="text-xl">
-                                            {order.totalAmount.toFixed(2)}
+                                           ETB {order.totalAmount.toFixed(2)}
                                         </strong>
                                     </div>
 
