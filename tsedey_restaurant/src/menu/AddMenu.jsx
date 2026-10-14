@@ -238,7 +238,7 @@ const AddMenu = () => {
                 {/* PRICE */}
                 <div>
                   <label className="text-sm font-medium mb-1 block">
-                    Price (USD) <span className="text-red-500">*</span>
+                    Price (ETB) <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
