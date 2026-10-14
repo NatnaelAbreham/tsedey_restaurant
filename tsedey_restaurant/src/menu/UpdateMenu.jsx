@@ -370,7 +370,7 @@ const UpdateMenu = () => {
                                                         : "text-gray-500"
                                                     }`}
                                             >
-                                                {item.categoryId === 0 ? "Food" : "Drink"}
+                                                {item.categoryId === 1 ? "Food" : "Drink"}
                                             </div>
                                         </button>
                                     ))
@@ -479,8 +479,8 @@ const UpdateMenu = () => {
                                                 : "bg-white border-gray-300 text-gray-900"
                                                 }`}
                                         >
-                                            <option value={0}>Food</option>
-                                            <option value={1}>Drink</option>
+                                            <option value={1}>Food</option>
+                                            <option value={2}>Drink</option>
                                         </select>
                                     </div>
 
